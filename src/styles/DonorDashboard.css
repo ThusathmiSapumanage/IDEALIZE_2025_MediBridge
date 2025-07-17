@@ -1,0 +1,190 @@
+/* src/styles/DonorDashboard.css */
+.donor-dashboard {
+  padding: 40px;
+  background: #f4f4f4;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.dashboard-title {
+  font-size: 2.5rem;
+  margin-bottom: 30px;
+  color: #333;
+  font-weight: 700;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  grid-template-areas:
+    "total pending history"
+    "hospitals hospitals hospitals";
+}
+
+.dashboard-card:nth-child(1) { grid-area: total; }
+.dashboard-card:nth-child(2) { grid-area: pending; }
+.dashboard-card:nth-child(3) { grid-area: history; }
+.dashboard-card:nth-child(4) { grid-area: hospitals; }
+
+.dashboard-card {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+.dashboard-card h3 {
+  margin-bottom: 12px;
+  color: #222;
+}
+
+.amount {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #EFBF04;
+}
+
+.donation-history {
+  padding-left: 16px;
+  list-style: none;
+}
+
+.donation-history li {
+  margin-bottom: 8px;
+  color: #444;
+}
+
+/* Hospital Selection Section */
+.dashboard-card.full-width {
+  text-align: center;
+  padding: 2rem;
+}
+
+.dashboard-card.full-width h3 {
+  font-size: 1.5rem;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-card.full-width p {
+  color: #444;
+  opacity: 0.8;
+  margin-bottom: 1.5rem;
+}
+
+/* Balanced Hospital Cards */
+.hospital-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 0;
+}
+
+.hospital-card {
+  background-color: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  outline: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  height: 90%;
+  padding-bottom: 0;
+}
+
+.hospital-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.hospital-card:focus {
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+}
+
+.hospital-image {
+  height: 180px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.hospital-image::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: linear-gradient(to top, rgba(0,0,0,0.4), transparent);
+}
+
+.hospital-info {
+  padding: 1.2rem;
+  padding-bottom: 1rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.hospital-info h3 {
+  color: #2c3e50;
+  margin-bottom: 0.6rem;
+  font-size: 1.1rem;
+}
+
+.hospital-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  color: #444;
+  font-size: 0.9rem;
+  margin-top: auto;
+}
+
+.select-hospital-btn {
+  width: 100%;
+  padding: 0.6rem;
+  margin-top: 1rem;
+  background-color: var(--golden-yellow);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.select-hospital-btn:hover {
+  background-color: var(--golden-yellow-dark);
+  transform: translateY(-2px);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "total"
+      "pending"
+      "history"
+      "hospitals";
+  }
+
+  .hospital-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-card.full-width {
+    padding: 1.5rem;
+  }
+}
