@@ -1,13 +1,19 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../styles/DonorDashboard.css';
+import '../styles/DonorDashboard.Module.css';
 
-function DonorDashboard({ hospitals }) {
+function DonorDashboard({ hospitals, onSelectHospital }) {
   const navigate = useNavigate();
 
   const handleSelectHospital = (hospital) => {
+    // Call the prop function if it exists (for App.jsx state management)
+    if (onSelectHospital) {
+      onSelectHospital(hospital);
+    }
+    // Also pass the hospital via route state
     navigate('/hospital', { state: { hospital } });
   };
+
   return (
     <div className="donor-dashboard">
       <h1 className="dashboard-title">Welcome, Donor!</h1>
@@ -38,7 +44,11 @@ function DonorDashboard({ hospitals }) {
 
           <div className="hospital-grid">
             {hospitals.map(hospital => (
-              <div key={hospital.id} className="hospital-card">
+              <div 
+                key={hospital.id} 
+                className="hospital-card"
+                onClick={() => handleSelectHospital(hospital)}
+              >
                 <div
                   className="hospital-image"
                   style={{ backgroundImage: `url(${hospital.image})` }}
@@ -51,7 +61,10 @@ function DonorDashboard({ hospitals }) {
                   </div>
                   <button
                     className="select-hospital-btn"
-                    onClick={() => handleSelectHospital(hospital)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSelectHospital(hospital);
+                    }}
                   >
                     Select Hospital
                   </button>
