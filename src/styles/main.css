@@ -18,11 +18,16 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: auto !important; /* Disables smooth scrolling globally */
+}
+
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: var(--gray-light);
   color: var(--text-dark);
   line-height: 1.6;
+  overflow-anchor: none;
 }
 
 a {

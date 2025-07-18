@@ -47,7 +47,7 @@ const Header = () => {
   return (
     <header className="app-header">
       <div className="header-content container">
-        <h1 className="header-title">MediBridge</h1>
+        <h1 className="header-title">Medi Bridge</h1>
         <div className="profile-container">
           <div
             className="user-info"

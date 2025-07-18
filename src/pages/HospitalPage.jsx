@@ -1,9 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import Chatbot from '../components/Chatbot';
 import '../styles/HospitalPage.css';
 
 const HospitalPage = ({ donationTypes = [], onBack, onDonate }) => {
   const location = useLocation();
+
+  useEffect(() => {
+    // Immediate scroll without animation
+    window.scrollTo(0, 0);
+
+    // Fallback for older browsers
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, []);
 
   // Get hospital from location state or props
   const hospital = location.state?.hospital;
@@ -105,6 +115,9 @@ const HospitalPage = ({ donationTypes = [], onBack, onDonate }) => {
           <p>Please select a hospital from the dashboard to view donation options.</p>
         </div>
       )}
+
+      {/* Floating Chatbot */}
+      <Chatbot />
     </div>
   );
 };

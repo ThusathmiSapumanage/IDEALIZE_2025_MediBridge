@@ -1,11 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import Chatbot from '../components/Chatbot';
 import '../styles/DonorDashboard.Module.css';
 
 function DonorDashboard({ hospitals, onSelectHospital }) {
   const navigate = useNavigate();
 
   const handleSelectHospital = (hospital) => {
+    window.scrollTo(0, 0);
+
     // Call the prop function if it exists (for App.jsx state management)
     if (onSelectHospital) {
       onSelectHospital(hospital);
@@ -44,8 +47,8 @@ function DonorDashboard({ hospitals, onSelectHospital }) {
 
           <div className="hospital-grid">
             {hospitals.map(hospital => (
-              <div 
-                key={hospital.id} 
+              <div
+                key={hospital.id}
                 className="hospital-card"
                 onClick={() => handleSelectHospital(hospital)}
               >
@@ -74,6 +77,9 @@ function DonorDashboard({ hospitals, onSelectHospital }) {
           </div>
         </div>
       </div>
+
+      {/* Floating Chatbot */}
+      <Chatbot />
     </div>
   );
 }
