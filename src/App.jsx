@@ -1,4 +1,3 @@
-// src/App.jsx
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
 import HomePage from './pages/HomePage';
@@ -38,40 +37,39 @@ function AppContent() {
 
   return (
     <div className="App">
-      <Header />
-
-      <main className="main-content">
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/registration" element={<Registration />} />
-          <Route
-            path="/donor-dashboard"
-            element={
-              <DonorDashboard
-                hospitals={hospitals}
-                onSelectHospital={(hospital) => {
-                  setSelectedHospital(hospital);
-                  navigate('/hospital');
-                }}
-              />
-            }
-          />
-          <Route
-            path="/hospital"
-            element={
-              <HospitalPage
-                hospital={selectedHospital}
-                donationTypes={donationTypes}
-                onBack={() => navigate('/donor-dashboard')}
-                onDonate={handleDonate}
-              />
-            }
-          />
-        </Routes>
-      </main>
-
-      <Footer />
+      <Routes>
+        {/* Routes without Header (will use Navbar in their own components) */}
+        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/registration" element={<Registration />} />
+        
+        {/* Routes with Header */}
+        <Route path="/donor-dashboard" element={
+          <>
+            <Header />
+            <DonorDashboard
+              hospitals={hospitals}
+              onSelectHospital={(hospital) => {
+                setSelectedHospital(hospital);
+                navigate('/hospital');
+              }}
+            />
+            <Footer />
+          </>
+        } />
+        <Route path="/hospital" element={
+          <>
+            <Header />
+            <HospitalPage
+              hospital={selectedHospital}
+              donationTypes={donationTypes}
+              onBack={() => navigate('/donor-dashboard')}
+              onDonate={handleDonate}
+            />
+            <Footer />
+          </>
+        } />
+      </Routes>
     </div>
   );
 }

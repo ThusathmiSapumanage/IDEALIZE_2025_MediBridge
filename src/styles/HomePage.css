@@ -432,7 +432,7 @@
 
 .social-icons a {
   font-size: 1rem;
-  margin-right: 15px;
+  margin-right: 0.5px;
 }
 
 .social-icons a:hover {
@@ -440,9 +440,9 @@
 }
 
 .footer-bottom {
-  margin-top: 30px;
+  margin-top: 25px;
   border-top: 1px solid var(--white);
-  padding-top: 10px;
+  padding-top: 30px;
 }
 
 .footer-bottom p {
