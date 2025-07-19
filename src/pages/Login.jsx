@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaGithub } from 'react-icons/fa';
+import { FaGithub, FaHeartbeat } from 'react-icons/fa';
 import axios from 'axios';
 import '../styles/Login.css';
 
@@ -91,30 +91,42 @@ function Login() {
   return (
     <div className="auth-container">
       <div className="auth-illustration">
-        <div>
-          <h2 className="illustration-title">Connecting Care, Bridging Hope</h2>
-          <p className="illustration-text">Login to support hospitals and save lives with MediBridge.</p>
+        <div className="illustration-content">
+
+          <h2 className="illustration-title">Donate Blood, Save Lives</h2>
+          <p className="illustration-text">Every drop counts. Login to join our community of life-saving donors.</p>
           {showIllustration ? (
             <img
-              src="/images/login-illustration.png"
-              alt="Login Illustration"
+              src="/images/Blood donation.png"
+              alt="Blood Donation Illustration"
               className="illustration-image"
               onError={() => setShowIllustration(false)}
             />
           ) : (
             <div className="illustration-placeholder">
-              <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
-                <rect width="100%" height="100%" fill="#e2e8f0" />
-                <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fill="#64748b">Illustration</text>
-              </svg>
+              <FaHeartbeat className="placeholder-icon" />
             </div>
           )}
+          <div className="donor-stats">
+            <div className="stat-item">
+              <span className="stat-number">10,000+</span>
+              <span className="stat-label">Lives Saved</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-number">5,000+</span>
+              <span className="stat-label">Active Donors</span>
+            </div>
+          </div>
         </div>
       </div>
 
       <div className="auth-form-container">
         <div className="auth-form">
-          <h1 className="auth-title">Sign in to MediBridge</h1>
+          <div className="form-header">
+            <FaHeartbeat className="form-icon" />
+            <h1 className="auth-title">Donor Login</h1>
+            <p className="auth-subtitle">Sign in to your donor account</p>
+          </div>
 
           <form onSubmit={handleSubmit}>
             <div className="form-group">
@@ -127,7 +139,7 @@ function Login() {
                 onChange={handleChange}
                 onBlur={validateEmail}
                 className={`form-control ${errors.email ? 'error-input' : ''}`}
-                placeholder="you@example.com"
+                placeholder="donor@example.com"
               />
               <span className="error-text">{errors.email}</span>
             </div>
@@ -167,7 +179,12 @@ function Login() {
               className="login-button"
               disabled={loading || !isFormValid}
             >
-              {!loading ? 'Sign in' : (
+              {!loading ? (
+                <>
+
+                  Sign in
+                </>
+              ) : (
                 <span className="loading-spinner">
                   <svg className="spinner" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -182,6 +199,7 @@ function Login() {
           <div className="divider">
             <div className="divider-line"></div>
             <div className="divider-text">Or continue with</div>
+            <div className="divider-line"></div>
           </div>
 
           <div className="social-buttons">
@@ -196,7 +214,7 @@ function Login() {
           </div>
 
           <div className="auth-footer">
-            Don’t have an account? <Link to="/registration" className="auth-link">Sign up</Link>
+            Not a donor yet? <Link to="/registration" className="auth-link">Join our life-saving community</Link>
           </div>
         </div>
       </div>
