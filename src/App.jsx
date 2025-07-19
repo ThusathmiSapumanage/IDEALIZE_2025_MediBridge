@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
 import HomePage from './pages/HomePage';
-import Login from './pages/Login';
+import DonorLogin from './pages/DonorLogin';
 import Registration from './pages/Registration';
 import DonorDashboard from './pages/DonorDashboard';
 import HospitalPage from './pages/HospitalPage';
@@ -95,7 +95,7 @@ function AppContent() {
       <Routes>
         {/* Routes without Header (will use Navbar in their own components) */}
         <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/donor-login" element={<DonorLogin />} />
         <Route path="/registration" element={<Registration />} />
 
         {/* Routes with Header */}

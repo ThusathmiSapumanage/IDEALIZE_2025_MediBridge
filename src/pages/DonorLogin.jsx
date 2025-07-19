@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaGithub, FaHeartbeat } from 'react-icons/fa';
 import axios from 'axios';
-import '../styles/Login.css';
+import '../styles/DonorLogin.css';
 
 function Login() {
   const [form, setForm] = useState({
