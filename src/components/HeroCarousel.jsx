@@ -4,22 +4,24 @@ import '../styles/HeroCarousel.css';
 
 const HeroCarousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const navigate = useNavigate(); // Hook to navigate programmatically
+  const navigate = useNavigate();
 
   const slides = [
     {
       image: '/images/image1.jpg',
       title: 'Bridge the Gap in Medical Care',
       description:
-        'Every day, hospitals struggle with shortages. Your donation—big or small—helps provide life-saving equipment, medicine, and care to those who need it most.',
+        'Every day, hospitals struggle with shortages. Your donation—big or small—helps provide life-saving equipment, medicine, and care to those who need it most. Be a hero today - press the button below to start saving lives in just minutes!',
       button: 'Donate Now',
+      path: '/donor-login' // Added path for donor login
     },
     {
       image: '/images/image2.jpg',
       title: 'NGOs, Partner with Us to Save Lives',
       description:
-        'Join forces with MediBridge to support hospitals in critical need. Provide medical supplies, services, or volunteers — and amplify your organization’s impact.',
+        'Join forces with MediBridge to support hospitals in critical need. Provide medical supplies, services, or volunteers — and amplify your organizations impact. Click below to create your account and unlock powerful partnerships!',
       button: 'Join as an NGO',
+      path: '/ngo-login' // Added path for NGO login
     }
   ];
 
@@ -39,8 +41,8 @@ const HeroCarousel = () => {
     setCurrentSlide((prev) => (prev + 1) % slides.length);
   };
 
-  const handleButtonClick = () => {
-    navigate('/login'); // Navigate to login page
+  const handleButtonClick = (path) => {
+    navigate(path); // Navigate to the specific path
   };
 
   return (
@@ -55,7 +57,10 @@ const HeroCarousel = () => {
             <div className="hero-content">
               <h1>{slide.title}</h1>
               <p>{slide.description}</p>
-              <button className="cta-button" onClick={handleButtonClick}>
+              <button 
+                className="cta-button" 
+                onClick={() => handleButtonClick(slide.path)} // Pass the specific path
+              >
                 {slide.button}
               </button>
             </div>
@@ -63,7 +68,6 @@ const HeroCarousel = () => {
         </div>
       ))}
 
-      {/* Left and right arrows */}
       <button className="nav-arrow left-arrow" onClick={goToPrevious}>&#10094;</button>
       <button className="nav-arrow right-arrow" onClick={goToNext}>&#10095;</button>
     </div>

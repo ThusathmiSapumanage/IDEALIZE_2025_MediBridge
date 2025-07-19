@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FaSignInAlt } from 'react-icons/fa';
 import '../styles/Navbar.css';
 
 function Navbar() {
@@ -79,13 +78,6 @@ function Navbar() {
         <li><button className={`nav-link ${activeSection === 'hospitals' ? 'active' : ''}`} onClick={() => handleScroll('hospitals')}>Hospitals</button></li>
         <li><button className={`nav-link ${activeSection === 'ngos' ? 'active' : ''}`} onClick={() => handleScroll('ngos')}>NGOs</button></li>
       </ul>
-
-      <div className="login-container">
-        <Link to="/login" className="login-button-1">
-          <FaSignInAlt className="login-icon" />
-          <span>Login</span>
-        </Link>
-      </div>
     </nav>
   );
 }
