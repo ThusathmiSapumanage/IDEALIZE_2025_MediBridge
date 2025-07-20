@@ -1,0 +1,228 @@
+/* ========= Hospital Page Styles ========= */
+.hospital-page.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  color: var(--deep-blue);
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: background-color 0.3s;
+  cursor: pointer;
+}
+
+.back-button:hover {
+  background-color: var(--medium-gray);
+}
+
+.hospital-card {
+  background-color: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hospital-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* Center vertically */
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--soft-gray);
+  gap: 3rem;
+}
+
+.hospital-text-content {
+  flex: 1;
+  min-width: 60%;
+  /* Give more space to text */
+}
+
+.hospital-header .hospital-image {
+  width: 220px;
+  height: 140px;
+  border-radius: 10px;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+  object-fit: cover;
+  /* Ensure image fills container */
+}
+
+.hospital-name {
+  font-size: 2rem;
+  /* Slightly larger */
+  color: var(--deep-blue);
+  font-weight: 700;
+  margin: 0 0 1rem 0;
+  /* More space below name */
+  line-height: 1.2;
+}
+
+.hospital-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.hospital-text-content {
+  min-width: 60%;
+}
+
+.detail-item {
+  display: flex;
+  gap: 1rem;
+  padding: 1.25rem;
+  background-color: var(--soft-gray);
+  border-radius: 10px;
+  /* Slightly more rounded */
+  align-items: flex-start;
+}
+
+.detail-icon {
+  font-size: 1.4rem;
+  /* Larger icons */
+  margin-top: 0.1rem;
+}
+
+.detail-item h3 {
+  margin-bottom: 0.75rem;
+  color: var(--text-dark);
+  font-size: 1.1rem;
+  /* Slightly larger */
+  font-weight: 600;
+}
+
+.detail-item p {
+  color: var(--text-dark);
+  margin: 0.25rem 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.detail-item div {
+  flex: 1;
+  min-width: 0;
+  /* Allows text to wrap properly */
+}
+
+.donation-types {
+  background-color: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 2rem;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-dark);
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background-color: var(--golden-yellow);
+}
+
+.donation-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.donation-card {
+  background-color: var(--soft-gray);
+  border-radius: 10px;
+  padding: 1.5rem;
+  transition: transform 0.3s ease;
+}
+
+.donation-card:hover {
+  transform: translateY(-5px);
+}
+
+.donation-name {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--deep-blue);
+}
+
+.donation-info {
+  color: var(--text-dark);
+  margin-bottom: 1.2rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.donate-btn {
+  background-color: var(--golden-yellow);
+  color: white;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: background-color 0.3s;
+  width: 100%;
+  cursor: pointer;
+}
+
+.donate-btn:hover {
+  background-color: var(--golden-yellow-dark);
+}
+
+.no-hospital-selected {
+  background-color: var(--white);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.no-hospital-selected p {
+  color: var(--text-dark);
+  font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+  .hospital-header {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .hospital-header .hospital-image {
+    width: 100%;
+    height: 200px;
+    order: -1;
+  }
+
+  .hospital-text-content {
+    min-width: 100%;
+  }
+}

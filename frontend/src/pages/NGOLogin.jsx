@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { FaGithub, FaHeartbeat } from 'react-icons/fa';
+import { Link, useNavigate } from 'react-router-dom';
+import { FaGithub } from 'react-icons/fa';
 import axios from 'axios';
-import '../styles/DonorLogin.Module.css';
+import '../styles/NGOLogin.css';
 
-function Login() {
+function NGOLogin() {
   const [form, setForm] = useState({
     email: '',
     password: '',
@@ -17,6 +17,7 @@ function Login() {
   const [authError, setAuthError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showIllustration, setShowIllustration] = useState(true);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -29,27 +30,33 @@ function Login() {
   const validateEmail = () => {
     if (!form.email) {
       setErrors(prev => ({ ...prev, email: 'Email is required' }));
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      return false;
+    } else if (!/^\S+@\S+\.\S+$/.test(form.email)) {
       setErrors(prev => ({ ...prev, email: 'Please enter a valid email' }));
+      return false;
     } else {
       setErrors(prev => ({ ...prev, email: '' }));
+      return true;
     }
   };
 
   const validatePassword = () => {
     if (!form.password) {
       setErrors(prev => ({ ...prev, password: 'Password is required' }));
-    } else if (form.password.length < 8) {
-      setErrors(prev => ({ ...prev, password: 'Password must be at least 8 characters' }));
+      return false;
+    } else if (form.password.length < 6) {
+      setErrors(prev => ({ ...prev, password: 'Password must be at least 6 characters' }));
+      return false;
     } else {
       setErrors(prev => ({ ...prev, password: '' }));
+      return true;
     }
   };
 
   const validateForm = () => {
-    validateEmail();
-    validatePassword();
-    return form.email && form.password && !errors.email && !errors.password;
+    const isEmailValid = validateEmail();
+    const isPasswordValid = validatePassword();
+    return isEmailValid && isPasswordValid;
   };
 
   const handleSubmit = async (e) => {
@@ -60,30 +67,51 @@ function Login() {
     setAuthError('');
 
     try {
-      const response = await axios.post('http://localhost:8080/auth/login', {
+      const response = await axios.post('http://localhost:8081/api/ngo/login', {
         email: form.email,
         password: form.password
       });
 
-      const { token, userId } = response.data;
-      localStorage.setItem('token', token);
-      localStorage.setItem('userId', userId);
+      // Assuming the backend returns an object with token and ngo data
+      const { token, ngo } = response.data;
+      
+      // Store the token and NGO info
+      localStorage.setItem('ngoToken', token);
+      localStorage.setItem('ngoEmail', form.email);
+      localStorage.setItem('ngoId', ngo.id);
+      localStorage.setItem('ngoName', ngo.ngoName);
 
-      window.location.href = '/dashboard';
+      if (form.remember) {
+        localStorage.setItem('rememberMe', 'true');
+      } else {
+        localStorage.removeItem('rememberMe');
+      }
+
+      navigate('/ngo-dashboard');
     } catch (error) {
       console.error('Login error:', error);
-      setAuthError('Invalid email or password.');
+      if (error.response) {
+        if (error.response.status === 404) {
+          setAuthError('No NGO found with this email');
+        } else if (error.response.status === 401) {
+          setAuthError('Invalid credentials');
+        } else {
+          setAuthError('Login failed. Please try again.');
+        }
+      } else {
+        setAuthError('Login failed. Please check your connection.');
+      }
     } finally {
       setLoading(false);
     }
   };
 
   const loginWithGithub = () => {
-    window.location.href = 'http://localhost:8080/auth/github';
+    alert('GitHub login coming soon');
   };
 
   const loginWithGoogle = () => {
-    window.location.href = 'http://localhost:8080/auth/google';
+    alert('Google login coming soon');
   };
 
   const isFormValid = form.email && form.password && !errors.email && !errors.password;
@@ -91,46 +119,34 @@ function Login() {
   return (
     <div className="auth-container">
       <div className="auth-illustration">
-        <div className="illustration-content">
-
-          <h2 className="illustration-title">Donate Blood, Save Lives</h2>
-          <p className="illustration-text">Every drop counts. Login to join our community of life-saving donors.</p>
+        <div>
+          <h2 className="illustration-title">Connecting Care, Bridging Hope</h2>
+          <p className="illustration-text">Login to manage your NGO and connect with donors.</p>
           {showIllustration ? (
             <img
-              src="/images/Blood donation.png"
-              alt="Blood Donation Illustration"
+              src="/images/login-illustration.png"
+              alt="Login Illustration"
               className="illustration-image"
               onError={() => setShowIllustration(false)}
             />
           ) : (
             <div className="illustration-placeholder">
-              <FaHeartbeat className="placeholder-icon" />
+              <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+                <rect width="100%" height="100%" fill="#e2e8f0" />
+                <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fill="#64748b">Illustration</text>
+              </svg>
             </div>
           )}
-          <div className="donor-stats">
-            <div className="stat-item">
-              <span className="stat-number">10,000+</span>
-              <span className="stat-label">Lives Saved</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-number">5,000+</span>
-              <span className="stat-label">Active Donors</span>
-            </div>
-          </div>
         </div>
       </div>
 
       <div className="auth-form-container">
         <div className="auth-form">
-          <div className="form-header">
-            <FaHeartbeat className="form-icon" />
-            <h1 className="auth-title">Donor Login</h1>
-            <p className="auth-subtitle">Sign in to your donor account</p>
-          </div>
+          <h1 className="auth-title">Sign in to Your NGO Account</h1>
 
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} noValidate>
             <div className="form-group">
-              <label htmlFor="email" className="form-label">Email address</label>
+              <label htmlFor="email" className="form-label">Email Address</label>
               <input
                 type="email"
                 id="email"
@@ -139,9 +155,10 @@ function Login() {
                 onChange={handleChange}
                 onBlur={validateEmail}
                 className={`form-control ${errors.email ? 'error-input' : ''}`}
-                placeholder="donor@example.com"
+                placeholder="your@email.com"
+                required
               />
-              <span className="error-text">{errors.email}</span>
+              {errors.email && <span className="error-text">{errors.email}</span>}
             </div>
 
             <div className="form-group">
@@ -155,8 +172,10 @@ function Login() {
                 onBlur={validatePassword}
                 className={`form-control ${errors.password ? 'error-input' : ''}`}
                 placeholder="••••••••"
+                required
+                minLength="6"
               />
-              <span className="error-text">{errors.password}</span>
+              {errors.password && <span className="error-text">{errors.password}</span>}
               <div className="remember-forgot">
                 <div className="remember-me">
                   <input
@@ -179,12 +198,7 @@ function Login() {
               className="login-button"
               disabled={loading || !isFormValid}
             >
-              {!loading ? (
-                <>
-
-                  Sign in
-                </>
-              ) : (
+              {!loading ? 'Sign in' : (
                 <span className="loading-spinner">
                   <svg className="spinner" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -199,7 +213,6 @@ function Login() {
           <div className="divider">
             <div className="divider-line"></div>
             <div className="divider-text">Or continue with</div>
-            <div className="divider-line"></div>
           </div>
 
           <div className="social-buttons">
@@ -214,7 +227,7 @@ function Login() {
           </div>
 
           <div className="auth-footer">
-            Don’t have an account? <Link to="/registration" className="auth-link">Sign up</Link>
+            Don't have an account? <Link to="/ngo-register" className="auth-link">Sign up</Link>
           </div>
         </div>
       </div>
@@ -222,4 +235,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default NGOLogin;

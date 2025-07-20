@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaGithub } from 'react-icons/fa';
 import axios from 'axios';
-import '../styles/NGOLogin.css';
+import '../styles/NGOLogin.Module.css';
 
 function Login() {
   const [form, setForm] = useState({
@@ -114,7 +114,7 @@ function Login() {
 
       <div className="auth-form-container">
         <div className="auth-form">
-          <h1 className="auth-title">Sign in to MediBridge</h1>
+          <h1 className="auth-tittle">Sign in to MediBridge</h1>
 
           <form onSubmit={handleSubmit}>
             <div className="form-group">

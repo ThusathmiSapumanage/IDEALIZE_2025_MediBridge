@@ -1,22 +1,23 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaGithub, FaHeartbeat } from 'react-icons/fa';
 import axios from 'axios';
-import '../styles/DonorLogin.Module.css';
+import '../styles/DonorLogin.css';
 
 function Login() {
   const [form, setForm] = useState({
-    email: '',
-    password: '',
+    userEmail: '',  // Changed to match backend field
+    userPassword: '',  // Changed to match backend field
     remember: false
   });
   const [errors, setErrors] = useState({
-    email: '',
-    password: ''
+    userEmail: '',
+    userPassword: ''
   });
   const [authError, setAuthError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showIllustration, setShowIllustration] = useState(true);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -27,29 +28,33 @@ function Login() {
   };
 
   const validateEmail = () => {
-    if (!form.email) {
-      setErrors(prev => ({ ...prev, email: 'Email is required' }));
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-      setErrors(prev => ({ ...prev, email: 'Please enter a valid email' }));
+    if (!form.userEmail) {
+      setErrors(prev => ({ ...prev, userEmail: 'Email is required' }));
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.userEmail)) {
+      setErrors(prev => ({ ...prev, userEmail: 'Please enter a valid email' }));
     } else {
-      setErrors(prev => ({ ...prev, email: '' }));
+      setErrors(prev => ({ ...prev, userEmail: '' }));
     }
   };
 
   const validatePassword = () => {
-    if (!form.password) {
-      setErrors(prev => ({ ...prev, password: 'Password is required' }));
-    } else if (form.password.length < 8) {
-      setErrors(prev => ({ ...prev, password: 'Password must be at least 8 characters' }));
+    if (!form.userPassword) {
+      setErrors(prev => ({ ...prev, userPassword: 'Password is required' }));
+    } else if (form.userPassword.length < 6) {
+      setErrors(prev => ({ 
+        ...prev, 
+        userPassword: 'Password must be at least 6 characters' 
+      }));
     } else {
-      setErrors(prev => ({ ...prev, password: '' }));
+      setErrors(prev => ({ ...prev, userPassword: '' }));
     }
   };
 
   const validateForm = () => {
     validateEmail();
     validatePassword();
-    return form.email && form.password && !errors.email && !errors.password;
+    return form.userEmail && form.userPassword && 
+           !errors.userEmail && !errors.userPassword;
   };
 
   const handleSubmit = async (e) => {
@@ -60,39 +65,38 @@ function Login() {
     setAuthError('');
 
     try {
-      const response = await axios.post('http://localhost:8080/auth/login', {
-        email: form.email,
-        password: form.password
-      });
+      // Updated to match your backend endpoint and payload
+      const response = await axios.post(
+        'http://localhost:8080/api/donor/login',
+        {
+          userEmail: form.userEmail,
+          userPassword: form.userPassword
+        }
+      );
 
-      const { token, userId } = response.data;
-      localStorage.setItem('token', token);
-      localStorage.setItem('userId', userId);
-
-      window.location.href = '/dashboard';
+      // Save JWT token to localStorage
+      localStorage.setItem('token', response.data);
+      
+      // Redirect to dashboard
+      navigate('/donor-dashboard');
     } catch (error) {
       console.error('Login error:', error);
-      setAuthError('Invalid email or password.');
+      setAuthError(
+        error.response?.data || 
+        'Invalid credentials. Please try again.'
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  const loginWithGithub = () => {
-    window.location.href = 'http://localhost:8080/auth/github';
-  };
-
-  const loginWithGoogle = () => {
-    window.location.href = 'http://localhost:8080/auth/google';
-  };
-
-  const isFormValid = form.email && form.password && !errors.email && !errors.password;
+  const isFormValid = form.userEmail && form.userPassword && 
+                     !errors.userEmail && !errors.userPassword;
 
   return (
     <div className="auth-container">
       <div className="auth-illustration">
         <div className="illustration-content">
-
           <h2 className="illustration-title">Donate Blood, Save Lives</h2>
           <p className="illustration-text">Every drop counts. Login to join our community of life-saving donors.</p>
           {showIllustration ? (
@@ -130,33 +134,33 @@ function Login() {
 
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label htmlFor="email" className="form-label">Email address</label>
+              <label htmlFor="userEmail" className="form-label">Email address</label>
               <input
                 type="email"
-                id="email"
-                name="email"
-                value={form.email}
+                id="userEmail"
+                name="userEmail"
+                value={form.userEmail}
                 onChange={handleChange}
                 onBlur={validateEmail}
-                className={`form-control ${errors.email ? 'error-input' : ''}`}
+                className={`form-control ${errors.userEmail ? 'error-input' : ''}`}
                 placeholder="donor@example.com"
               />
-              <span className="error-text">{errors.email}</span>
+              <span className="error-text">{errors.userEmail}</span>
             </div>
 
             <div className="form-group">
-              <label htmlFor="password" className="form-label">Password</label>
+              <label htmlFor="userPassword" className="form-label">Password</label>
               <input
                 type="password"
-                id="password"
-                name="password"
-                value={form.password}
+                id="userPassword"
+                name="userPassword"
+                value={form.userPassword}
                 onChange={handleChange}
                 onBlur={validatePassword}
-                className={`form-control ${errors.password ? 'error-input' : ''}`}
+                className={`form-control ${errors.userPassword ? 'error-input' : ''}`}
                 placeholder="••••••••"
               />
-              <span className="error-text">{errors.password}</span>
+              <span className="error-text">{errors.userPassword}</span>
               <div className="remember-forgot">
                 <div className="remember-me">
                   <input
@@ -180,10 +184,7 @@ function Login() {
               disabled={loading || !isFormValid}
             >
               {!loading ? (
-                <>
-
-                  Sign in
-                </>
+                "Sign in"
               ) : (
                 <span className="loading-spinner">
                   <svg className="spinner" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -203,18 +204,18 @@ function Login() {
           </div>
 
           <div className="social-buttons">
-            <button type="button" className="social-button github" onClick={loginWithGithub}>
+            <button type="button" className="social-button github">
               <FaGithub className="social-icon" />
               GitHub
             </button>
-            <button type="button" className="social-button google" onClick={loginWithGoogle}>
+            <button type="button" className="social-button google">
               <img src="/images/google-icon.svg" alt="Google" className="social-icon" />
               Google
             </button>
           </div>
 
           <div className="auth-footer">
-            Don’t have an account? <Link to="/registration" className="auth-link">Sign up</Link>
+            Not a donor yet? <Link to="/registration" className="auth-link">Join our life-saving community</Link>
           </div>
         </div>
       </div>

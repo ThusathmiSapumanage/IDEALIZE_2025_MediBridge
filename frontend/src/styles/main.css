@@ -1,0 +1,70 @@
+/* src/styles/main.css */
+
+/* ========= Global Color Variables ========= */
+:root {
+  --golden-yellow: #F59E0B;
+  --deep-blue: #2563EB;
+  --text-dark: #1F2937;
+  --soft-gray: #F3F4F6;
+  --white: #FFFFFF;
+  --golden-yellow-dark: #D97706;
+  --medium-gray: #e0e0e0;
+}
+
+/* ========= Reset & Base Styles ========= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: auto !important; /* Disables smooth scrolling globally */
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--gray-light);
+  color: var(--text-dark);
+  line-height: 1.6;
+  overflow-anchor: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+input, select, textarea {
+  font-family: inherit;
+}
+
+/* Scrollbar style (optional, nice touch) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--golden-yellow);
+  border-radius: 4px;
+}
+
+/* ========= Utility Classes ========= */
+.text-center {
+  text-align: center;
+}
+
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.hidden {
+  display: none;
+}

@@ -1,0 +1,365 @@
+/* Color Variables */
+.authContainer {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--white);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.5;
+  color: var(--dark-gray);
+}
+
+
+.authIllustration {
+  flex: 1;
+  background-color: var(--primary-light);
+  display: flex; /* Changed from display: none (handled in media query) */
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.authIllustration > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  margin-top: -570px; /* You're trying to move it up */
+  text-align: center;
+}
+
+
+.authFormContainer {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.authForm {
+  width: 100%;
+  max-width: 400px;
+  padding: 2.5rem;
+  background-color: var(--white);
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.authForm:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Typography */
+.authTitle {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+
+.illustrationTitle {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.illustrationText {
+  color: var(--gray);
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+/* Form Elements */
+.formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.formLabel {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--dark-gray);
+}
+
+.formControl {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.formControl:focus {
+  outline: 0;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 0.2rem rgba(239, 191, 4, 0.3);
+}
+
+.passwordHint {
+  font-size: 0.75rem;
+  color: var(--gray);
+  margin-top: 0.5rem;
+}
+
+.termsAgreement {
+  display: flex;
+  align-items: center;
+  margin: 1.5rem 0;
+  font-size: 0.875rem;
+  color: var(--gray);
+  gap: 0.5rem;
+}
+
+.termsAgreement input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--primary);
+}
+
+.termsLink {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.termsLink:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.auth-link:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.errorMessage {
+  color: var(--error);
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* Register Button */
+.registerButton {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: var(--primary);
+  color: var(--white);
+  border: none;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.registerButton:hover:not(:disabled) {
+  background-color: var(--primary-dark);
+  color: var(--white);
+}
+
+.registerButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.loadingSpinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-right: 0.5rem;
+}
+
+.spinnerCircle {
+  opacity: 0.25;
+}
+
+.spinnerPath {
+  opacity: 0.75;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Divider */
+.divider {
+  position: relative;
+  margin: 1.5rem 0;
+}
+
+.dividerLine {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  height: 1.5px;
+  background-color: var(--accent);
+  z-index: 1;
+}
+
+.dividerText {
+  position: relative;
+  z-index: 2;
+  display: inline-block;
+  padding: 0 0.5rem;
+  background-color: var(--white);
+  color: var(--gray);
+  font-size: 0.875rem;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Social Buttons */
+.socialButtons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.socialButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.375rem;
+  background-color: transparent;
+  color: var(--dark-gray);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.socialButton:hover {
+  background-color: var(--primary-light);
+  border-color: var(--primary);
+}
+
+.socialIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-right: 0.5rem;
+}
+
+.github .socialIcon {
+  color: #000000;
+  fill: currentColor;
+}
+
+.google .socialIcon {
+  color: currentColor;
+}
+
+/* Footer */
+.authFooter {
+  margin-top: 1.5rem;
+  text-align: center;
+  color: var(--gray);
+  font-size: 0.875rem;
+}
+
+.authLink {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.authLink:hover {
+  text-decoration: underline;
+}
+
+/* Illustration */
+.illustrationImage {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  border-radius: 0.5rem;
+}
+
+.illustrationPlaceholder {
+  width: 100%;
+  height: 200px;
+  background-color: #e2e8f0;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray);
+}
+
+.illustrationPlaceholder svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Error Styles */
+.errorInput {
+  border-color: var(--error) !important;
+}
+
+.errorText {
+  color: var(--error);
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+/* Responsive Design */
+@media (min-width: 768px) {
+  .authIllustration {
+    display: flex;
+  }
+}
+
+/* Color Variables */
+:root {
+  --primary: #002B5B;
+  /* MediBridge deep blue */
+  --primary-dark: #001f40;
+  --primary-light: #f1f5fb;
+  /* Soft blue background */
+  --accent: #EFBF04;
+  /* Golden yellow */
+  --white: #ffffff;
+  --light-gray: #f8f9fa;
+  --gray: #6c757d;
+  --dark-gray: #343a40;
+  --error: #ef4444;
+}
+
+.imagePreviewContainer {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.imagePreview {
+  max-width: 150px;
+  max-height: 150px;
+  border-radius: 50%;
+  border: 2px solid var(--primary-light);
+  object-fit: cover;
+}
