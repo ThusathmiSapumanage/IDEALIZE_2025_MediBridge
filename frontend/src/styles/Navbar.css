@@ -114,20 +114,20 @@
   20% {
     left: -6px;
     /* for "Medi" */
-    width: 82px;
+    width: 84px;
   }
 
   35%,
   65% {
-    left: 74px;
+    left: 76px;
     /* balanced position for "Bridge" */
-    width: 108px;
+    width: 106px;
   }
 
   80%,
   100% {
     left: -6px;
-    width: 82px;
+    width: 84px;
   }
 }
 

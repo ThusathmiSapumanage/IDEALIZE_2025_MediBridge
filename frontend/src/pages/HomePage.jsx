@@ -1,27 +1,74 @@
+// src/pages/HomePage.jsx
 import React, { useRef, useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import HeroCarousel from '../components/HeroCarousel';
 import Chatbot from '../components/Chatbot';
 import '../styles/HomePage.css';
 
+const API_BASE = 'http://localhost:8080';
+
 function HomePage() {
+  // urgent carousel refs/state
   const scrollRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
-  const totalCards = 7;
   const cardsPerPage = 3;
-  const totalPages = Math.ceil(totalCards / cardsPerPage);
 
+  // data states
+  const [urgentNeeds, setUrgentNeeds] = useState([]);
+  const [donorReviews, setDonorReviews] = useState([]);
+  const [hospitals, setHospitals] = useState([]);
+
+  // testimonial refs/state
+  const testimonialScrollRef = useRef(null);
+  const [testimonialActiveIndex, setTestimonialActiveIndex] = useState(0);
+  const testimonialCardsPerPage = 3;
+
+  // Derived paging values (guard against 0)
+  const totalCards = urgentNeeds.length || 1;
+  const totalPages = Math.max(1, Math.ceil(totalCards / cardsPerPage));
+
+  const testimonialCards = donorReviews.length || 1;
+  const testimonialTotalPages = Math.max(1, Math.ceil(testimonialCards / testimonialCardsPerPage));
+
+  // Fetch data from backend
+  useEffect(() => {
+    fetch(`${API_BASE}/api/urgent-needs`)
+      .then((res) => res.json())
+      .then((data) => setUrgentNeeds(Array.isArray(data) ? data : []))
+      .catch((err) => console.error('Error fetching urgent needs:', err));
+
+    fetch(`${API_BASE}/api/donor-reviews`)
+      .then((res) => res.json())
+      .then((data) => setDonorReviews(Array.isArray(data) ? data : []))
+      .catch((err) => console.error('Error fetching donor reviews:', err));
+
+    fetch(`${API_BASE}/api/hospitals`)
+      .then((res) => res.json())
+      .then((data) => setHospitals(Array.isArray(data) ? data : []))
+      .catch((err) => console.error('Error fetching hospitals:', err));
+  }, []);
+
+  // Helpers: safe cardWidth calculation
+  const getCardWidth = (container) => {
+    if (!container || !container.children || container.children.length === 0) return 0;
+    return container.children[0].offsetWidth + 20;
+  };
+
+  // Urgent cards scroll handlers
   const handleScroll = () => {
     const container = scrollRef.current;
-    const scrollLeft = container.scrollLeft;
-    const cardWidth = container.children[0].offsetWidth + 20;
-    const index = Math.round(scrollLeft / (cardWidth * cardsPerPage));
+    if (!container) return;
+    const cardWidth = getCardWidth(container);
+    if (!cardWidth) return;
+    const index = Math.round(container.scrollLeft / (cardWidth * cardsPerPage));
     setActiveIndex(index);
   };
 
   const scrollToIndex = (index) => {
     const container = scrollRef.current;
-    const cardWidth = container.children[0].offsetWidth + 20;
+    if (!container) return;
+    const cardWidth = getCardWidth(container);
+    if (!cardWidth) return;
     container.scrollTo({
       left: index * cardWidth * cardsPerPage,
       behavior: 'smooth',
@@ -37,7 +84,9 @@ function HomePage() {
     if (activeIndex < totalPages - 1) scrollToIndex(activeIndex + 1);
   };
 
+  // Auto-advance urgent needs carousel when multiple pages exist
   useEffect(() => {
+    if (!totalPages || totalPages <= 1) return;
     const interval = setInterval(() => {
       setActiveIndex((prev) => {
         const nextIndex = (prev + 1) % totalPages;
@@ -46,26 +95,24 @@ function HomePage() {
       });
     }, 7000);
     return () => clearInterval(interval);
-  }, [totalPages]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [totalPages, urgentNeeds]);
 
-  // Donor Testimonial Carousel Logic
-  const testimonialScrollRef = useRef(null);
-  const [testimonialActiveIndex, setTestimonialActiveIndex] = useState(0);
-  const testimonialCardsPerPage = 3;
-  const testimonialCards = 10;
-  const testimonialTotalPages = Math.ceil(testimonialCards / testimonialCardsPerPage);
-
+  // Testimonial handlers
   const handleTestimonialScroll = () => {
     const container = testimonialScrollRef.current;
-    const scrollLeft = container.scrollLeft;
-    const cardWidth = container.children[0].offsetWidth + 20;
-    const index = Math.round(scrollLeft / (cardWidth * testimonialCardsPerPage));
+    if (!container) return;
+    const cardWidth = getCardWidth(container);
+    if (!cardWidth) return;
+    const index = Math.round(container.scrollLeft / (cardWidth * testimonialCardsPerPage));
     setTestimonialActiveIndex(index);
   };
 
   const scrollToTestimonialIndex = (index) => {
     const container = testimonialScrollRef.current;
-    const cardWidth = container.children[0].offsetWidth + 20;
+    if (!container) return;
+    const cardWidth = getCardWidth(container);
+    if (!cardWidth) return;
     container.scrollTo({
       left: index * cardWidth * testimonialCardsPerPage,
       behavior: 'smooth',
@@ -83,6 +130,7 @@ function HomePage() {
   };
 
   useEffect(() => {
+    if (!testimonialTotalPages || testimonialTotalPages <= 1) return;
     const interval = setInterval(() => {
       setTestimonialActiveIndex((prev) => {
         const nextIndex = (prev + 1) % testimonialTotalPages;
@@ -91,7 +139,13 @@ function HomePage() {
       });
     }, 7000);
     return () => clearInterval(interval);
-  }, [testimonialTotalPages]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [testimonialTotalPages, donorReviews]);
+
+  // Helper to show placeholder if image missing
+  const imageOrPlaceholder = (url, placeholder = '/images/placeholder.png') => {
+    return url && url.length > 0 ? url : placeholder;
+  };
 
   return (
     <>
@@ -127,47 +181,31 @@ function HomePage() {
           <h2>Urgent Needs</h2>
           <div className="urgent-cards-wrapper">
             <div ref={scrollRef} onScroll={handleScroll} className="urgent-cards-scroll">
-              {[
-                {
-                  title: "Oxygen Cylinder Shortage – St. Mary’s",
-                  desc: "St. Mary’s Hospital is facing a critical shortage of oxygen cylinders for pneumonia patients. Donations will help ensure uninterrupted oxygen supply in the ICU and emergency wards."
-                },
-                {
-                  title: "Medicine Refill – Children’s Hospital",
-                  desc: "The pediatric unit urgently needs common medications for children with chronic conditions and infections. Your support can help restock vital drugs for effective treatment."
-                },
-                {
-                  title: "Blood Donors Needed – City Care",
-                  desc: "The blood bank at City Care Hospital is running dangerously low on all major blood groups. Donations can help maintain emergency preparedness for trauma and surgical patients."
-                },
-                {
-                  title: "Ventilator Repair – Hope Medical",
-                  desc: "Two essential ICU ventilators are currently non-functional, impacting care for patients in respiratory distress. Funding is needed immediately for professional repairs and testing."
-                },
-                {
-                  title: "Neonatal ICU Support – Ridgeway",
-                  desc: "Premature infants at Ridgeway Medical are in urgent need of incubators, warmers, and specialized monitoring systems to ensure survival and healthy development. Your contribution can make a direct impact."
-                },
-                {
-                  title: "Emergency Beds – Mercy Hospital",
-                  desc: "Patient intake has surged at Mercy Hospital, creating a bed shortage in emergency wards. Help us expand capacity by funding additional emergency beds and essential bedding."
-                },
-                {
-                  title: "Surgical Kits – Unity Clinic",
-                  desc: "Unity Clinic requires basic and sterile surgical kits to continue scheduled and emergency surgeries. Supplies are running low and delays are impacting patient recovery. Help restock today."
-                },
-              ].map((item, idx) => (
-                <div className="urgent-card" key={idx}>
-                  <h3>{item.title}</h3>
-                  <p>{item.desc}</p>
+              {urgentNeeds.length > 0 ? (
+                urgentNeeds.map((item, idx) => (
+                  <div className="urgent-card" key={item.id ?? idx}>
+                    <h3>{item.title}</h3>
+                    <p>{item.description}</p>
+                  </div>
+                ))
+              ) : (
+                // fallback static placeholder while empty
+                <div className="urgent-card">
+                  <h3>No urgent needs right now</h3>
+                  <p>Check back later for updates.</p>
                 </div>
-              ))}
+              )}
             </div>
+
             <div className="urgent-nav">
               <button className="scroll-arrow" onClick={scrollLeft}>&#8249;</button>
               <div className="scroll-dots">
                 {[...Array(totalPages)].map((_, idx) => (
-                  <span key={idx} className={idx === activeIndex ? 'active' : ''} onClick={() => scrollToIndex(idx)} />
+                  <span
+                    key={idx}
+                    className={idx === activeIndex ? 'active' : ''}
+                    onClick={() => scrollToIndex(idx)}
+                  />
                 ))}
               </div>
               <button className="scroll-arrow" onClick={scrollRight}>&#8250;</button>
@@ -180,67 +218,35 @@ function HomePage() {
           <h2>What Our Donors Say</h2>
           <div className="testimonial-wrapper">
             <div ref={testimonialScrollRef} onScroll={handleTestimonialScroll} className="testimonial-cards-scroll">
-              {[
-                {
-                  img: "/images/donor1.jpeg",
-                  text: "“Supporting MediBridge has been incredibly rewarding. I love seeing exactly where my help goes.”",
-                  name: "– Nisal Perera"
-                },
-                {
-                  img: "/images/donor2.jpg",
-                  text: "“This platform makes donating so transparent and easy. I trust them fully.”",
-                  name: "– Rohan Mehta"
-                },
-                {
-                  img: "/images/donor3.jpg",
-                  text: "“Knowing my donation helped children in critical care makes me want to give more.”",
-                  name: "– Ayesha Khan"
-                },
-                {
-                  img: "/images/donor4.jpg",
-                  text: "“MediBridge made it easy to support the hospitals that need it most.”",
-                  name: "– Sanjay Rao"
-                },
-                {
-                  img: "/images/donor5.jpg",
-                  text: "“I regularly donate through MediBridge because I trust their process and values.”",
-                  name: "– Rina De Silva"
-                },
-                {
-                  img: "/images/donor6.jpg",
-                  text: "“It’s amazing to see the updates from the hospitals after donating.”",
-                  name: "– Kabir Shah"
-                },
-                {
-                  img: "/images/donor7.jpg",
-                  text: "“I feel connected to the causes I support — this platform is life-changing.”",
-                  name: "– Manel Deshmukh"
-                },
-                {
-                  img: "/images/donor8.jpg",
-                  text: "“MediBridge ensures my help reaches where it’s most needed.”",
-                  name: "– Tharun Wijesinghe"
-                },
-                {
-                  img: "/images/donor9.jpg",
-                  text: "“The transparency and communication from MediBridge is top-notch.”",
-                  name: "– Shreya Menon"
-                }
-              ].map((item, idx) => (
-                <div className="testimonial-card" key={idx}>
-                  <div className="donor-image">
-                    <img src={item.img} alt={`Donor ${idx + 1}`} />
+              {donorReviews.length > 0 ? (
+                donorReviews.map((item, idx) => (
+                  <div className="testimonial-card" key={item.id ?? idx}>
+                    <div className="donor-image">
+                      <img src={imageOrPlaceholder(item.donorImage)} alt={item.donorName || `Donor ${idx + 1}`} />
+                    </div>
+                    <p>{item.reviewText}</p>
+                    <h4>{item.donorName}</h4>
                   </div>
-                  <p>{item.text}</p>
-                  <h4>{item.name}</h4>
+                ))
+              ) : (
+                <div className="testimonial-card">
+                  <div className="donor-image">
+                    <img src="/images/placeholder.png" alt="placeholder" />
+                  </div>
+                  <p>No reviews yet.</p>
                 </div>
-              ))}
+              )}
             </div>
+
             <div className="testimonial-nav">
               <button className="scroll-arrow" onClick={scrollTestimonialLeft}>&#8249;</button>
               <div className="scroll-dots">
                 {[...Array(testimonialTotalPages)].map((_, idx) => (
-                  <span key={idx} className={idx === testimonialActiveIndex ? 'active' : ''} onClick={() => scrollToTestimonialIndex(idx)} />
+                  <span
+                    key={idx}
+                    className={idx === testimonialActiveIndex ? 'active' : ''}
+                    onClick={() => scrollToTestimonialIndex(idx)}
+                  />
                 ))}
               </div>
               <button className="scroll-arrow" onClick={scrollTestimonialRight}>&#8250;</button>
@@ -251,17 +257,20 @@ function HomePage() {
         {/* Featured Hospitals Section */}
         <div id="hospitals" className="featured-hospitals">
           <h2>Featured Hospitals in Need</h2>
-          <div className="hospital-card">
-            <img src="/images/hospital1.jpg" alt="St. Mary’s Hospital" className="hospital-image" />
-            <h3>St. Mary’s Hospital</h3>
-            <p>Emergency room equipment needed urgently. Help now!</p>
-            <button className="cta-button">Donate Now</button>
-          </div>
-          <div className="hospital-card">
-            <img src="/images/hospital2.jpg" alt="Lady Ridgeway Hospital" className="hospital-image" />
-            <h3>Lady Ridgeway Hospital</h3>
-            <p>Oxygen cylinders urgently required for newborn care.</p>
-            <button className="cta-button">Donate Now</button>
+          <div className="hospitals-grid">
+            {hospitals.length > 0 ? (
+              hospitals.map((hospital) => (
+                <div className="hospital-card" key={hospital.id}>
+                  <img src={imageOrPlaceholder(hospital.imageUrl)} alt={hospital.name} className="hospital-image" />
+                  <h3>{hospital.name}</h3>
+                  <p>{hospital.location}</p>
+                  <p><strong>Contact:</strong> {hospital.contactNumber}</p>
+                  <button className="cta-button">Donate Now</button>
+                </div>
+              ))
+            ) : (
+              <p>No hospitals available.</p>
+            )}
           </div>
         </div>
 
@@ -270,48 +279,6 @@ function HomePage() {
           <h2>Are You an NGO? Partner with Us</h2>
           <p>Join MediBridge to help hospitals access the resources they need. Together, we can make a greater impact.</p>
           <button className="cta-button">Learn More</button>
-        </div>
-
-        {/* Footer Section */}
-        <div className="footer">
-          <div className="footer-content">
-            <div className="footer-section">
-              <div className="footer-section-content">
-                <h4>Contact Us</h4>
-                <p>Email: support@medibridge.com</p>
-                <p>Phone: +123 456 789</p>
-              </div>
-            </div>
-
-            <div className="footer-section">
-              <div className="footer-section-content">
-                <h4>Legal</h4>
-                <a href="/privacy-policy">Privacy Policy</a>
-                <a href="/terms-of-service">Terms of Service</a>
-              </div>
-            </div>
-
-            <div className="footer-section">
-              <div className="footer-section-content">
-                <h4>Follow Us</h4>
-                <div className="social-icons">
-                  <a href="https://facebook.com/medibridge" target="_blank" rel="noopener noreferrer">
-                    <i className="fab fa-facebook"></i> Facebook
-                  </a>
-                  <a href="https://twitter.com/medibridge" target="_blank" rel="noopener noreferrer">
-                    <i className="fab fa-twitter"></i> Twitter
-                  </a>
-                  <a href="https://instagram.com/medibridge" target="_blank" rel="noopener noreferrer">
-                    <i className="fab fa-instagram"></i> Instagram
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="footer-bottom">
-            <p>&copy; 2025 MediBridge. Making a difference through donations.</p>
-          </div>
         </div>
       </div>
 

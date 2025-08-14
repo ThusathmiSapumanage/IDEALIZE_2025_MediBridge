@@ -13,8 +13,11 @@ function DonorDashboard({ hospitals, onSelectHospital }) {
     if (onSelectHospital) {
       onSelectHospital(hospital);
     }
-    // Also pass the hospital via route state
-    navigate('/hospital', { state: { hospital } });
+    // Replace the current entry instead of pushing a new one
+    navigate('/hospital', { 
+      state: { hospital },
+      replace: true  // This is the key change
+    });
   };
 
   return (

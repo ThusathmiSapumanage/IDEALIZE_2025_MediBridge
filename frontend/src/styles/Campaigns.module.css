@@ -1,4 +1,4 @@
-/* NGODashboard.module.css */
+/* Campaigns.module.css */
 /* Color Variables */
 :root {
   --primary: #2563EB;
@@ -231,33 +231,105 @@
 .sidebarFooter {
   padding: 1.5rem;
   border-top: 1px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-/* Main Content Styles */
-.mainContent {
-  flex: 1;
-  padding: 2rem;
-  margin-left: 280px;
-  min-height: 100vh;
+/* Add these to your existing CSS file */
+
+/* Add Button */
+.addButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--primary);
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
-.mainHeader {
+.addButton:hover {
+  background-color: var(--primary-dark);
+}
+
+.addIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Modal Styles */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background-color: var(--white);
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  margin: 1rem;
+}
+
+.modalHeader {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 2rem;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--light-gray);
 }
 
-.pageTitle {
-  font-size: 1.75rem;
-  font-weight: 700;
+.modalHeader h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
   color: var(--dark);
-  margin-bottom: 0.5rem;
 }
 
-.pageSubtitle {
+.modalClose {
+  background: none;
+  border: none;
+  cursor: pointer;
   color: var(--gray);
-  font-size: 0.875rem;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+}
+
+.modalClose:hover {
+  background-color: var(--light-gray);
+}
+
+.closeIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.modalBody {
+  padding: 1.5rem;
+}
+
+/* Add these styles to your existing CSS file */
+
+/* Header Actions */
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 /* Notification Styles */
@@ -354,242 +426,312 @@
   color: var(--gray);
 }
 
-/* Button Styles */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
-  font-weight: 500;
-  transition: all 0.2s;
-  cursor: pointer;
-  border: 1px solid transparent;
+/* Main Content Styles */
+.mainContent {
+  flex: 1;
+  padding: 2rem;
+  margin-left: 280px;
+  min-height: 100vh;
 }
 
-.btnPrimary {
-  background-color: var(--primary);
-  color: white;
-}
-
-.btnPrimary:hover {
-  background-color: var(--primary-dark);
-}
-
-.btnSecondary {
-  background-color: var(--light);
-  color: var(--dark);
-  border-color: #e0e0e0;
-}
-
-.btnSecondary:hover {
-  background-color: #E5E7EB;
-}
-
-.btnOutline {
-  background-color: transparent;
-  border-color: var(--primary);
-  color: var(--primary);
-}
-
-.btnOutline:hover {
-  background-color: var(--primary-light);
-}
-
-.btnSmall {
-  padding: 0.25rem 0.5rem;
-  font-size: 0.875rem;
-}
-
-.btnIcon {
-  width: 1.25rem;
-  height: 1.25rem;
-  margin-right: 0.5rem;
-}
-
-.mt2 {
-  margin-top: 0.5rem;
-}
-
-/* Summary Cards */
-.summaryCards {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.5rem;
+.mainHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
   margin-bottom: 2rem;
 }
 
-.card {
-  background-color: var(--white);
-  border-radius: 0.5rem;
-  box-shadow: var(--shadow-sm);
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow);
-}
-
-.cardBody {
-  padding: 1.5rem;
-  position: relative;
-}
-
-.cardIcon {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 0.375rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1rem;
-}
-
-.cardIcon svg {
-  width: 1.25rem;
-  height: 1.25rem;
-}
-
-.cardTitle {
-  font-size: 0.875rem;
-  color: var(--gray);
+.pageTitle {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--dark);
   margin-bottom: 0.5rem;
 }
 
-.cardValue {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--dark);
-  margin-bottom: 0.25rem;
-}
-
-.cardSubtext {
-  font-size: 0.75rem;
+.pageSubtitle {
   color: var(--gray);
-}
-
-.totalIcon {
-  background-color: var(--primary-light);
-  color: var(--primary);
-}
-
-.completedIcon {
-  background-color: #D1FAE5;
-  color: #10B981;
-}
-
-.pendingIcon {
-  background-color: #FEF3C7;
-  color: var(--golden-yellow);
-}
-
-.urgentIcon {
-  background-color: #FEE2E2;
-  color: #EF4444;
-}
-
-/* Table Styles */
-.tableContainer {
-  overflow-x: auto;
-}
-
-.donationsTable {
-  width: 100%;
-  border-collapse: collapse;
   font-size: 0.875rem;
 }
 
-.donationsTable th,
-.donationsTable td {
-  padding: 0.75rem 1rem;
-  text-align: left;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.donationsTable th {
-  background-color: var(--light);
-  font-weight: 600;
-  color: var(--dark);
-  text-transform: uppercase;
-  font-size: 0.75rem;
-  letter-spacing: 0.05em;
-}
-
-.donationsTable tr:hover {
-  background-color: var(--light);
-}
-
-.statusBadge {
-  display: inline-block;
-  padding: 0.25rem 0.5rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: capitalize;
-}
-
-.statusBadge.completed {
-  background-color: #D1FAE5;
-  color: #10B981;
-}
-
-.statusBadge.pending {
-  background-color: #FEF3C7;
-  color: var(--golden-yellow);
-}
-
-.statusBadge.failed {
-  background-color: #FEE2E2;
-  color: #EF4444;
-}
-
-/* Task List Styles */
-.taskListContainer {
+/* Card Styles */
+.card {
   background-color: var(--white);
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   box-shadow: var(--shadow-sm);
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
 }
 
-.taskListHeader {
+.cardHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--light-gray);
 }
 
-.sectionTitle {
+.cardHeader h2 {
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--dark);
 }
 
-.taskList {
+.cardBadge {
+  background-color: var(--primary-light);
+  color: var(--primary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+}
+
+.cardBody {
   padding: 1.5rem;
 }
 
-/* Responsive Styles */
-@media (max-width: 1024px) {
-  .summaryCards {
-    grid-template-columns: repeat(2, 1fr);
-  }
+/* Form Styles */
+.formGroup {
+  margin-bottom: 1.25rem;
 }
 
+.formGroup label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--dark);
+  margin-bottom: 0.5rem;
+}
+
+.formGroup input,
+.formGroup textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--medium-gray);
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.formGroup input:focus,
+.formGroup textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.formGroup textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.formRow {
+  display: flex;
+  gap: 1rem;
+}
+
+.formRow .formGroup {
+  flex: 1;
+}
+
+/* Button Styles */
+.primaryButton {
+  background-color: var(--primary);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  width: 100%;
+}
+
+.primaryButton:hover {
+  background-color: var(--primary-dark);
+}
+
+.secondaryButton {
+  background-color: var(--white);
+  color: var(--primary);
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--primary);
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.secondaryButton:hover {
+  background-color: var(--primary-light);
+}
+
+.tertiaryButton {
+  background-color: transparent;
+  color: var(--gray);
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--medium-gray);
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tertiaryButton:hover {
+  background-color: var(--light-gray);
+}
+
+/* Message Styles */
+.successMessage {
+  color: var(--success);
+  background-color: #D1FAE5;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.errorMessage {
+  color: var(--danger);
+  background-color: #FEE2E2;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+/* Campaign List Styles */
+.campaignsList {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.campaignItem {
+  background-color: var(--white);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  border-left: 4px solid var(--golden-yellow);
+  transition: all 0.2s;
+}
+
+.campaignItem:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-2px);
+}
+
+.campaignInfo h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--dark);
+}
+
+.campaignInfo p {
+  font-size: 0.875rem;
+  color: var(--gray);
+  margin-bottom: 1rem;
+}
+
+.progressContainer {
+  margin: 1rem 0;
+}
+
+.progressLabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--gray);
+  margin-bottom: 0.5rem;
+}
+
+.progressBar {
+  height: 0.5rem;
+  background-color: var(--light-gray);
+  border-radius: 0.25rem;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background-color: var(--golden-yellow);
+  border-radius: 0.25rem;
+  transition: width 0.5s ease;
+}
+
+.progressPercentage {
+  text-align: right;
+  font-size: 0.75rem;
+  color: var(--primary);
+  margin-top: 0.25rem;
+  font-weight: 500;
+}
+
+.campaignMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  font-size: 0.75rem;
+  color: var(--gray);
+}
+
+.statusBadge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.statusBadge.active {
+  background-color: #D1FAE5;
+  color: #10B981;
+}
+
+.statusBadge.completed {
+  background-color: #FEF3C7;
+  color: #D97706;
+}
+
+.campaignActions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+/* Empty State */
+.emptyState {
+  text-align: center;
+  padding: 2rem;
+}
+
+.emptyIcon {
+  width: 3rem;
+  height: 3rem;
+  color: var(--medium-gray);
+  margin-bottom: 1rem;
+}
+
+.emptySubtext {
+  font-size: 0.875rem;
+  color: var(--gray);
+  margin-top: 0.25rem;
+}
+
+/* Responsive Styles */
 @media (max-width: 768px) {
   .sidebar {
     width: 240px;
   }
-
+  
   .mainContent {
     margin-left: 240px;
     padding: 1.5rem;
   }
-
-  .taskListHeader {
+  
+  .formRow {
     flex-direction: column;
-    align-items: flex-start;
     gap: 1rem;
   }
 }
@@ -602,13 +744,13 @@
     border-right: none;
     border-bottom: 1px solid var(--medium-gray);
   }
-
+  
   .mainContent {
     margin-left: 0;
     padding: 1rem;
   }
-
-  .summaryCards {
-    grid-template-columns: 1fr;
+  
+  .campaignActions {
+    flex-direction: column;
   }
 }

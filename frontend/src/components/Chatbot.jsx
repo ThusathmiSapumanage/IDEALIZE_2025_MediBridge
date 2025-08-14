@@ -1,4 +1,6 @@
+// Chatbot.jsx
 import React, { useState } from 'react';
+import axios from 'axios';
 import '../styles/Chatbot.css';
 
 function Chatbot() {
@@ -16,19 +18,31 @@ function Chatbot() {
     });
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (input.trim()) {
       const newMessage = { text: input, sender: 'user' };
       setMessages(prev => [...prev, newMessage]);
       setInput('');
 
-      // Simulated bot response
-      setTimeout(() => {
+      try {
+        // Send message to backend
+        const res = await axios.post('http://localhost:8080/api/chat/reply', {
+          message: input.toLowerCase()
+        });
+
+        const botMessage = res.data; // Backend response text
         setMessages(prev => [
           ...prev,
-          { text: '🤖 Thanks! We’ll get back to you.', sender: 'bot' }
+          { text: botMessage, sender: 'bot' }
         ]);
-      }, 1000);
+
+      } catch (err) {
+        console.error(err);
+        setMessages(prev => [
+          ...prev,
+          { text: '⚠️ Something went wrong. Please try again.', sender: 'bot' }
+        ]);
+      }
     }
   };
 

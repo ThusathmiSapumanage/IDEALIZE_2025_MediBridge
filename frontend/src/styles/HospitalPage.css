@@ -41,7 +41,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  /* Center vertically */
   margin-bottom: 1.5rem;
   padding-bottom: 1.5rem;
   border-bottom: 2px solid var(--soft-gray);
@@ -51,7 +50,6 @@
 .hospital-text-content {
   flex: 1;
   min-width: 60%;
-  /* Give more space to text */
 }
 
 .hospital-header .hospital-image {
@@ -63,16 +61,13 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   flex-shrink: 0;
   object-fit: cover;
-  /* Ensure image fills container */
 }
 
 .hospital-name {
   font-size: 2rem;
-  /* Slightly larger */
   color: var(--deep-blue);
   font-weight: 700;
   margin: 0 0 1rem 0;
-  /* More space below name */
   line-height: 1.2;
 }
 
@@ -83,23 +78,17 @@
   margin-top: 1.5rem;
 }
 
-.hospital-text-content {
-  min-width: 60%;
-}
-
 .detail-item {
   display: flex;
   gap: 1rem;
   padding: 1.25rem;
   background-color: var(--soft-gray);
   border-radius: 10px;
-  /* Slightly more rounded */
   align-items: flex-start;
 }
 
 .detail-icon {
   font-size: 1.4rem;
-  /* Larger icons */
   margin-top: 0.1rem;
 }
 
@@ -107,7 +96,6 @@
   margin-bottom: 0.75rem;
   color: var(--text-dark);
   font-size: 1.1rem;
-  /* Slightly larger */
   font-weight: 600;
 }
 
@@ -121,7 +109,6 @@
 .detail-item div {
   flex: 1;
   min-width: 0;
-  /* Allows text to wrap properly */
 }
 
 .donation-types {

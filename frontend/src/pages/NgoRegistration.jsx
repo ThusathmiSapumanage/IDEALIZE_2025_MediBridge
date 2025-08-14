@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import styles from '../styles/NRegistration.module.css';
+import styles from '../styles/NGORegistration.module.css';
 
 function NgoRegistration() {
   const [form, setForm] = useState({
@@ -20,7 +20,6 @@ function NgoRegistration() {
   const [errors, setErrors] = useState({});
   const [authError, setAuthError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [imagePreview, setImagePreview] = useState(null);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;

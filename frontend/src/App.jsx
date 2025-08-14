@@ -8,9 +8,11 @@ import DonorDashboard from './pages/DonorDashboard';
 import HospitalPage from './pages/HospitalPage';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import NgoRegistration from './pages/NgoRegistration';
+import NGORegistration from './pages/NGORegistration';
 import NGODashboard from './pages/NGODashboard';
-
+import Campaigns from './pages/Campaigns';
+import UrgentNeeds from './pages/UrgentNeeds';
+import Hospitals from './pages/Hospitals';
 
 function AppContent() {
   const navigate = useNavigate();
@@ -29,12 +31,6 @@ function AppContent() {
     { id: 1, donorName: "John Smith", amount: 5000, date: "2023-06-15", status: "completed" },
     { id: 2, donorName: "Sarah Johnson", amount: 10000, date: "2023-06-18", status: "completed" },
     { id: 3, donorName: "Michael Brown", amount: 7500, date: "2023-06-20", status: "pending" },
-  ];
-
-  const beneficiaries = [
-    { id: 1, name: "Rural Health Clinic", type: "Medical Facility", familySize: 0, location: "Northern Province", image: "" },
-    { id: 2, name: "Orphanage Center", type: "Children's Home", familySize: 32, location: "Eastern District", image: "" },
-    { id: 3, name: "Elderly Care Home", type: "Senior Facility", familySize: 18, location: "Western Suburbs", image: "" },
   ];
 
   const hospitals = [
@@ -100,27 +96,37 @@ function AppContent() {
     }
   ];
 
-    const handleAddCampaign = () => {
+  const handleAddCampaign = () => {
     alert("New campaign creation would be implemented here");
   };
+
+  // const handleAddUrgentNeed = () => {
+  //   alert("New urgent need creation would be implemented here");
+  // };
 
   const handleDonate = (donationTypeId) => {
     const donationType = donationTypes.find(t => t.id === donationTypeId);
     alert(`Donation initiated for ${donationType.name} at ${selectedHospital.name}`);
-    // In a real app, you would navigate to a donation form or process
   };
 
   return (
     <div className="App">
       <Routes>
-        {/* Routes without Header (will use Navbar in their own components) */}
-        <Route path="/" element={<HomePage />} />
+        {/* HomePage - Only Footer */}
+        <Route path="/" element={
+          <>
+            <HomePage />
+            <Footer />
+          </>
+        } />
+
+        {/* Login/Registration Pages - No Header or Footer */}
         <Route path="/donor-login" element={<DonorLogin />} />
         <Route path="/ngo-login" element={<NGOLogin />} />
         <Route path="/registration" element={<Registration />} />
+        <Route path="/ngo-register" element={<NGORegistration />} />
 
-
-        {/* Routes with Header */}
+        {/* Donor Dashboard - Header and Footer */}
         <Route path="/donor-dashboard" element={
           <>
             <Header />
@@ -135,27 +141,7 @@ function AppContent() {
           </>
         } />
 
-<Route path="/ngo-dashboard" element={
-          <>
-            <Header />
-            <NGODashboard 
-              donations={donations}
-              beneficiaries={beneficiaries}
-              onAddCampaign={handleAddCampaign}
-            />
-            <Footer />
-          </>
-        } />
-
-         {/* Add this new route */}
-  <Route path="/ngo-register" element={
-    <>
-      <Header />
-      <NgoRegistration />
-      <Footer />
-    </>
-  } />
-
+        {/* Hospital Page - Header and Footer */}
         <Route path="/hospital" element={
           <>
             <Header />
@@ -166,6 +152,30 @@ function AppContent() {
             />
             <Footer />
           </>
+        } />
+
+        {/* NGO Dashboard - No Header or Footer */}
+        <Route path="/ngo-dashboard" element={
+          <NGODashboard
+            donations={donations}
+            hospitals={hospitals}
+            onAddCampaign={handleAddCampaign}
+          />
+        } />
+
+        {/* Campaigns Page - No Header or Footer */}
+        <Route path="/campaigns" element={
+          <Campaigns />
+        } />
+
+        {/* Urgent Needs Page - No Header or Footer */}
+        <Route path="/urgent-needs" element={
+          <UrgentNeeds />
+        } />
+
+        {/* Hospitals Page - No Header or Footer */}
+        <Route path="/hospitals" element={
+          <Hospitals />
         } />
       </Routes>
     </div>
