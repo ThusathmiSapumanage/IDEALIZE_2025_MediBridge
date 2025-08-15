@@ -1,0 +1,11 @@
+1. Register: POST http://localhost:8080/api/ngo/register
+
+2. Login: POST http://localhost:8080/api/ngo/login
+
+3. Update: PUT http://localhost:8080/api/ngo/update/1
+
+4. Delete: DELETE http://localhost:8080/api/ngo/delete/1
+
+5. Get NGO by ID: GET http://localhost:8080/api/ngo/1
+
+6. Get NGO by Name: GET http://localhost:8080/api/ngo/name/Test%20NGO

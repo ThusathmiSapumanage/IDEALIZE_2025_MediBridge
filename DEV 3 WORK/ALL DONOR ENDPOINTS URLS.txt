@@ -1,0 +1,11 @@
+1. Register: URL: http://localhost:8080/api/donor/register
+
+2. Login: URL: http://localhost:8080/api/donor/login
+
+3. Get By Id: URL: http://localhost:8080/api/donor/find/1
+
+4. Get By Name: URL: http://localhost:8080/api/donor/findByName/john_doe
+
+5. Update: URL: http://localhost:8080/api/donor/update/1
+
+6. Delete: URL: http://localhost:8080/api/donor/delete/1
