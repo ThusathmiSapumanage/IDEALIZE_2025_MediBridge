@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from '../styles/NGODashboard.module.css';
 import NGOProfile from '../components/NGOProfile';
 
-function NGODashboard({ donations, hospitals, onAddCampaign }) {
-  const navigate = useNavigate();
+const API_BASE = 'http://localhost:8080';
 
+function NGODashboard({ donations, onAddCampaign }) {
+  const navigate = useNavigate();
+  const [hospitals, setHospitals] = useState([]);
   const [notifications, setNotifications] = useState([
     { id: 1, message: 'New donation of Rs. 5,000 from Rohan Sharma', time: '2 mins ago', read: false },
     { id: 2, message: 'Monthly report is ready for review', time: '1 hour ago', read: true },
@@ -20,17 +22,31 @@ function NGODashboard({ donations, hospitals, onAddCampaign }) {
     avatar: null
   };
 
+  // Load hospitals from backend
+  const loadHospitals = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/api/hospitals`);
+      const data = await res.json();
+      const sortedHospitals = Array.isArray(data)
+        ? data.sort((a, b) => b.id - a.id)
+        : [];
+      setHospitals(sortedHospitals);
+    } catch (e) {
+      console.error('Failed to fetch hospitals:', e);
+    }
+  };
+
+  useEffect(() => {
+    loadHospitals();
+  }, []);
+
   const handleViewDonationDetails = (donation) => {
     navigate('/donation-details', { state: { donation } });
   };
 
-  const handleViewHospital = (hospital) => {
-    navigate('/hospital', { state: { hospital } });
-  };
-
   const summary = {
     totalFunds: 125000,
-    hospitals: 15,
+    hospitals: hospitals.length, // Now using actual count from state
     activeCampaigns: 3,
     urgentNeeds: 2
   };
@@ -68,7 +84,6 @@ function NGODashboard({ donations, hospitals, onAddCampaign }) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
             </svg>
             <span>Hospitals</span>
-            <span className={styles.badge}>{summary.hospitals}</span>
           </Link>
 
           <Link to="/urgent-needs" className={styles.navItem}>
@@ -76,7 +91,6 @@ function NGODashboard({ donations, hospitals, onAddCampaign }) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
             <span>Urgent Needs</span>
-            <span className={styles.badge}>{summary.urgentNeeds}</span>
           </Link>
 
           <Link to="/campaigns" className={styles.navItem}>
@@ -261,7 +275,7 @@ function NGODashboard({ donations, hospitals, onAddCampaign }) {
           <div className={styles.taskListHeader}>
             <h2 className={styles.sectionTitle}>Partner Hospitals</h2>
             <Link to="/hospitals" className={`${styles.btn} ${styles.btnSecondary}`}>
-              View Hospitals
+              View All Hospitals
             </Link>
           </div>
 
@@ -270,36 +284,49 @@ function NGODashboard({ donations, hospitals, onAddCampaign }) {
               <table className={styles.donationsTable}>
                 <thead>
                   <tr>
+                    <th>Logo</th>
                     <th>Hospital Name</th>
                     <th>Location</th>
                     <th>Contact</th>
                     <th>Status</th>
-                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {hospitals.map(hospital => (
-                    <tr key={hospital.id}>
+                  {hospitals.slice(0, 5).map(hospital => ( // Show only first 5 hospitals
+                    <tr key={hospital.id || hospital._id}>
+                      <td>
+                        {hospital.imageUrl ? (
+                          <img
+                            src={hospital.imageUrl}
+                            alt={hospital.name}
+                            className={styles.logoThumb}
+                            style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }}
+                          />
+                        ) : (
+                          <div className={styles.logoThumbPlaceholder}>
+                            <svg xmlns="http://www.w3.org/2000/svg" className={styles.imagePlaceholderIcon} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                            </svg>
+                          </div>
+                        )}
+                      </td>
                       <td>{hospital.name}</td>
                       <td>{hospital.location}</td>
-                      <td>{hospital.contact}</td>
+                      <td>{hospital.contactNumber || hospital.contact || '-'}</td>
                       <td>
-                        <span className={`${styles.statusBadge} ${hospital.status}`}>
-                          {hospital.status}
+                        <span className={`${styles.statusBadge} active`}>
+                          Active
                         </span>
-                      </td>
-                      <td>
-                        <button
-                          className={`${styles.btn} ${styles.btnSmall} ${styles.btnOutline}`}
-                          onClick={() => handleViewHospital(hospital)}
-                        >
-                          View
-                        </button>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
+              {hospitals.length === 0 && (
+                <div className={styles.emptyState}>
+                  <p>No hospitals registered yet</p>
+                </div>
+              )}
             </div>
           </div>
         </div>

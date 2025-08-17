@@ -219,66 +219,12 @@
   color: currentColor;
 }
 
-.badge {
-  background-color: var(--primary);
-  color: white;
-  border-radius: 9999px;
-  padding: 0.25rem 0.5rem;
-  font-size: 0.75rem;
-  margin-left: auto;
-}
-
 .sidebarFooter {
   padding: 1.5rem;
   border-top: 1px solid #e0e0e0;
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-
-.userProfile {
-  display: flex;
-  align-items: center;
-  flex: 1;
-  cursor: pointer;
-}
-
-.avatar {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 50%;
-  margin-right: 0.75rem;
-  overflow: hidden;
-  background-color: var(--primary-light);
-}
-
-.avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.userInfo {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-width: 0;
-}
-
-.userName {
-  font-weight: 600;
-  color: var(--dark);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.userEmail {
-  font-size: 0.75rem;
-  color: var(--gray);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 /* Main Content Styles */
@@ -765,12 +711,12 @@
   .sidebar {
     width: 240px;
   }
-  
+
   .mainContent {
     margin-left: 240px;
     padding: 1.5rem;
   }
-  
+
   .urgentActions {
     flex-direction: column;
   }
@@ -784,7 +730,7 @@
     border-right: none;
     border-bottom: 1px solid var(--medium-gray);
   }
-  
+
   .mainContent {
     margin-left: 0;
     padding: 1rem;

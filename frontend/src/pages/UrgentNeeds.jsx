@@ -1,79 +1,111 @@
-import React, { useState } from 'react';
+// src/pages/UrgentNeeds.jsx
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styles from '../styles/UrgentNeeds.module.css';
 import NGOProfile from '../components/NGOProfile';
 
+const API_BASE = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
+
 function UrgentNeeds() {
+  // Form & UI state
   const [urgentTitle, setUrgentTitle] = useState('');
   const [urgentDescription, setUrgentDescription] = useState('');
   const [message, setMessage] = useState('');
   const [showCreateUrgentNeed, setShowCreateUrgentNeed] = useState(false);
+
+  // Notifications
   const [notifications, setNotifications] = useState([
     { id: 1, message: 'New urgent need: Emergency Medical Supplies', time: '15 mins ago', read: false },
-    { id: 2, message: 'Urgent need "Winter Blankets" was fulfilled', time: '2 days ago', read: true }
+    { id: 2, message: 'Urgent need "Winter Blankets" was fulfilled', time: '2 days ago', read: true },
   ]);
   const [showNotifications, setShowNotifications] = useState(false);
 
-  // Mock urgent needs data
-  const [urgentNeeds, setUrgentNeeds] = useState([
-    {
-      id: 1,
-      title: "Emergency Medical Supplies",
-      description: "Urgently need antibiotics and surgical equipment for COVID ward",
-      date: "2023-10-15",
-      status: "critical",
-      priority: "high"
-    },
-    {
-      id: 2,
-      title: "Winter Blankets",
-      description: "Need 500 blankets for homeless shelters before winter starts",
-      date: "2023-11-01",
-      status: "pending",
-      priority: "medium"
-    }
-  ]);
+  // Server data
+  const [urgentNeeds, setUrgentNeeds] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const handleAddUrgentNeed = () => {
-    if (!urgentTitle || !urgentDescription) {
+  const user = { name: 'NGO Admin', email: 'admin@example.org', avatar: null };
+
+  // Fetch urgent needs
+  useEffect(() => {
+    const fetchUrgentNeeds = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(`${API_BASE}/api/urgent-needs`);
+        if (!res.ok) throw new Error(`Failed to load urgent needs: ${res.status}`);
+        const data = await res.json();
+        setUrgentNeeds(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error(err);
+        setMessage('Could not load urgent needs. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUrgentNeeds();
+  }, []);
+
+  // Add urgent need
+  const handleAddUrgentNeed = async () => {
+    setMessage('');
+    if (!urgentTitle.trim() || !urgentDescription.trim()) {
       setMessage('Please fill all fields');
       return;
     }
 
-    const newUrgentNeed = {
-      id: urgentNeeds.length + 1,
-      title: urgentTitle,
-      description: urgentDescription,
-      date: new Date().toISOString().split('T')[0],
-      status: "pending",
-      priority: "high"
-    };
+    try {
+      const body = {
+        title: urgentTitle.trim(),
+        description: urgentDescription.trim(),
+      };
 
-    setUrgentNeeds([...urgentNeeds, newUrgentNeed]);
-    setMessage('Urgent need added successfully!');
-    setUrgentTitle('');
-    setUrgentDescription('');
-    setShowCreateUrgentNeed(false);
-  };
+      console.log('Sending body:', body);
 
-  const toggleNotifications = () => {
-    setShowNotifications(!showNotifications);
-    // Mark all as read when opening
-    if (!showNotifications) {
-      setNotifications(notifications.map(n => ({ ...n, read: true })));
+      const res = await fetch(`${API_BASE}/api/urgent-needs`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+
+      if (!res.ok) {
+        const txt = await res.text().catch(() => '');
+        throw new Error(`Create failed: ${res.status} ${txt}`);
+      }
+
+      const created = await res.json();
+
+      setUrgentNeeds((prev) => [
+        {
+          ...created,
+          title: created.title || body.title,
+          description: created.description || body.description,
+          date: created.createdAt || new Date().toISOString(),
+          status: created.status || 'pending',
+          priority: created.priority || 'high',
+        },
+        ...prev,
+      ]);
+
+      setMessage('Urgent need added successfully!');
+      setUrgentTitle('');
+      setUrgentDescription('');
+      setShowCreateUrgentNeed(false);
+    } catch (err) {
+      console.error(err);
+      setMessage('Failed to add urgent need. Please try again.');
     }
   };
 
-  // Mock user data
-  const user = {
-    name: 'NGO Admin',
-    email: 'admin@example.org',
-    avatar: null
+  const toggleNotifications = () => {
+    setShowNotifications((s) => !s);
+    if (!showNotifications) {
+      setNotifications((n) => n.map((x) => ({ ...x, read: true })));
+    }
   };
 
   return (
     <div className={styles.dashboardContainer}>
-      {/* Sidebar Navigation */}
+      {/* Sidebar Navigation (unchanged UI) */}
       <aside className={styles.sidebar}>
         <div className={styles.sidebarHeader}>
           <Link to="/" className={styles.logoText}>
@@ -103,7 +135,6 @@ function UrgentNeeds() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
             <span>Urgent Needs</span>
-            <span className={styles.badge}>{urgentNeeds.length}</span>
           </Link>
 
           <Link to="/campaigns" className={styles.navItem}>
@@ -128,46 +159,32 @@ function UrgentNeeds() {
           </div>
           <div className={styles.headerActions}>
             <div className={styles.notificationWrapper}>
-              <button 
-                className={styles.notificationBtn}
-                onClick={toggleNotifications}
-              >
+              <button className={styles.notificationBtn} onClick={toggleNotifications}>
                 <svg xmlns="http://www.w3.org/2000/svg" className={styles.notificationIcon} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                 </svg>
-                {notifications.some(n => !n.read) && (
-                  <span className={styles.notificationBadge}></span>
-                )}
+                {notifications.some((n) => !n.read) && <span className={styles.notificationBadge}></span>}
               </button>
               {showNotifications && (
                 <div className={styles.notificationDropdown}>
-                  <div className={styles.notificationHeader}>
-                    <h3>Notifications</h3>
-                  </div>
+                  <div className={styles.notificationHeader}><h3>Notifications</h3></div>
                   <div className={styles.notificationList}>
                     {notifications.length > 0 ? (
-                      notifications.map(notification => (
-                        <div 
-                          key={notification.id} 
-                          className={`${styles.notificationItem} ${!notification.read ? styles.unread : ''}`}
-                        >
+                      notifications.map((notification) => (
+                        <div key={notification.id} className={`${styles.notificationItem} ${!notification.read ? styles.unread : ''}`}>
                           <p>{notification.message}</p>
                           <span className={styles.notificationTime}>{notification.time}</span>
                         </div>
                       ))
                     ) : (
-                      <div className={styles.noNotifications}>
-                        No new notifications
-                      </div>
+                      <div className={styles.noNotifications}>No new notifications</div>
                     )}
                   </div>
                 </div>
               )}
             </div>
-            <button 
-              className={styles.addButton}
-              onClick={() => setShowCreateUrgentNeed(true)}
-            >
+
+            <button className={styles.addButton} onClick={() => setShowCreateUrgentNeed(true)}>
               <svg xmlns="http://www.w3.org/2000/svg" className={styles.addIcon} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
               </svg>
@@ -182,27 +199,25 @@ function UrgentNeeds() {
             <h2>Current Urgent Needs</h2>
             <div className={styles.cardBadge}>{urgentNeeds.length}</div>
           </div>
+
           <div className={styles.cardBody}>
-            {urgentNeeds.length > 0 ? (
+            {loading ? (
+              <div className={styles.emptyState}><p>Loading…</p></div>
+            ) : urgentNeeds.length > 0 ? (
               <div className={styles.urgentNeedsList}>
-                {urgentNeeds.map(need => (
+                {urgentNeeds.map((need) => (
                   <div key={need.id} className={`${styles.urgentItem} ${need.priority}`}>
                     <div className={styles.urgentHeader}>
                       <h3>{need.title}</h3>
-                      <span className={`${styles.priorityBadge} ${need.priority}`}>
-                        {need.priority}
-                      </span>
+                      <span className={`${styles.priorityBadge} ${need.priority}`}>{need.priority}</span>
                     </div>
                     <p className={styles.urgentDescription}>{need.description}</p>
                     <div className={styles.urgentMeta}>
                       <span>Added: {new Date(need.date).toLocaleDateString()}</span>
-                      <span className={`${styles.statusBadge} ${need.status}`}>
-                        {need.status}
-                      </span>
+                      <span className={`${styles.statusBadge} ${need.status}`}>{need.status}</span>
                     </div>
                     <div className={styles.urgentActions}>
-                      <button className={styles.secondaryButton}>Mark as Resolved</button>
-                      <button className={styles.tertiaryButton}>Request Help</button>
+                      <button className={styles.secondaryButton} disabled>Mark as Resolved</button>
                     </div>
                   </div>
                 ))}
@@ -225,10 +240,7 @@ function UrgentNeeds() {
             <div className={styles.modal}>
               <div className={styles.modalHeader}>
                 <h3>Add Urgent Need</h3>
-                <button 
-                  className={styles.modalClose}
-                  onClick={() => setShowCreateUrgentNeed(false)}
-                >
+                <button className={styles.modalClose} onClick={() => setShowCreateUrgentNeed(false)}>
                   <svg xmlns="http://www.w3.org/2000/svg" className={styles.closeIcon} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                   </svg>
@@ -250,9 +262,13 @@ function UrgentNeeds() {
                     placeholder="Describe the urgent need in detail"
                     value={urgentDescription}
                     onChange={(e) => setUrgentDescription(e.target.value)}
-                  ></textarea>
+                  />
                 </div>
-                {message && <p className={message.includes('success') ? styles.successMessage : styles.errorMessage}>{message}</p>}
+                {message && (
+                  <p className={message.includes('success') ? styles.successMessage : styles.errorMessage}>
+                    {message}
+                  </p>
+                )}
                 <button className={styles.primaryButton} onClick={handleAddUrgentNeed}>
                   Add Urgent Need
                 </button>

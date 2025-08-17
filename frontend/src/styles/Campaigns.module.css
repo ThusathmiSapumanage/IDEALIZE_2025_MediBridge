@@ -323,6 +323,63 @@
   padding: 1.5rem;
 }
 
+/* Campaign Type Selector */
+.typeSelector {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.typeOption {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.typeOption:hover {
+  border-color: #3b82f6;
+}
+
+.typeOption.selected {
+  border-color: #3b82f6;
+  background-color: #eff6ff;
+}
+
+.typeIcon {
+  font-size: 24px;
+  display: block;
+  margin-bottom: 5px;
+}
+
+/* Type Specific Fields */
+.typeSpecificFields {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.typeSpecificFields h4 {
+  margin-bottom: 15px;
+  color: #374151;
+}
+
+/* Small Spinner */
+.spinnerSmall {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
 /* Add these styles to your existing CSS file */
 
 /* Header Actions */

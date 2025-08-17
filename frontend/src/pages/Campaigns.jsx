@@ -1,82 +1,164 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styles from '../styles/Campaigns.module.css';
 import NGOProfile from '../components/NGOProfile';
 
+const API_BASE = 'http://localhost:8080';
+
+// Campaign type configurations (only Blood Donation and Medical Supplies)
+const CAMPAIGN_TYPES = {
+  BLOOD: {
+    label: 'Blood Donation',
+    icon: '🩸',
+    fields: [
+      {
+        name: 'bloodType',
+        label: 'Blood Type Needed',
+        type: 'select',
+        options: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
+        required: true
+      },
+      {
+        name: 'quantity',
+        label: 'Units Needed',
+        type: 'number',
+        required: true
+      }
+    ]
+  },
+  SUPPLIES: {
+    label: 'Medical Supplies',
+    icon: '🏥',
+    fields: [
+      {
+        name: 'supplyType',
+        label: 'Supply Type',
+        type: 'text',
+        required: true
+      },
+      {
+        name: 'quantity',
+        label: 'Quantity Needed',
+        type: 'number',
+        required: true
+      }
+    ]
+  }
+};
+
 function Campaigns() {
   const [campaignTitle, setCampaignTitle] = useState('');
   const [campaignDescription, setCampaignDescription] = useState('');
-  const [fundingGoal, setFundingGoal] = useState('');
   const [endDate, setEndDate] = useState('');
   const [message, setMessage] = useState('');
   const [showCreateCampaign, setShowCreateCampaign] = useState(false);
-
+  const [campaigns, setCampaigns] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [campaignType, setCampaignType] = useState('BLOOD'); // Set to valid initial type
+  const [typeSpecificFields, setTypeSpecificFields] = useState({});
   const [notifications, setNotifications] = useState([
     { id: 1, message: 'Campaign "Medical Equipment" reached 65% of goal', time: '30 mins ago', read: false },
     { id: 2, message: 'New donation of Rs. 10,000 for Children Education', time: '2 hours ago', read: true }
   ]);
   const [showNotifications, setShowNotifications] = useState(false);
 
-  // Mock campaigns data
-  const [campaigns, setCampaigns] = useState([
-    {
-      id: 1,
-      title: "Medical Equipment for Rural Hospitals",
-      description: "Help us provide essential medical equipment to rural hospitals in need",
-      goal: 500000,
-      raised: 325000,
-      endDate: "2023-12-31",
-      status: "active"
-    },
-    {
-      id: 2,
-      title: "Children's Education Fund",
-      description: "Support education for underprivileged children in urban areas",
-      goal: 250000,
-      raised: 180000,
-      endDate: "2023-11-15",
-      status: "active"
-    }
-  ]);
+  const user = {
+    name: 'NGO Admin',
+    email: 'admin@example.org',
+    avatar: null
+  };
 
-  const handleAddCampaign = () => {
-    if (!campaignTitle || !campaignDescription || !fundingGoal || !endDate) {
-      setMessage('Please fill all fields');
+  useEffect(() => {
+    loadCampaigns();
+  }, []);
+
+  const loadCampaigns = async () => {
+    setIsLoading(true);
+    try {
+      const res = await fetch(`${API_BASE}/api/campaigns`);
+      const data = await res.json();
+      setCampaigns(Array.isArray(data) ? data : []);
+    } catch (e) {
+      console.error('Failed to fetch campaigns:', e);
+      setMessage('Failed to load campaigns');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleTypeSpecificChange = (fieldName, value) => {
+    setTypeSpecificFields(prev => ({
+      ...prev,
+      [fieldName]: value
+    }));
+  };
+
+  const handleAddCampaign = async () => {
+    setMessage('');
+    if (!campaignTitle || !campaignDescription || !endDate) {
+      setMessage('Please fill all required fields');
       return;
     }
 
-    const newCampaign = {
-      id: campaigns.length + 1,
-      title: campaignTitle,
-      description: campaignDescription,
-      goal: parseInt(fundingGoal),
-      raised: 0,
-      endDate,
-      status: "active"
-    };
+    const currentTypeConfig = CAMPAIGN_TYPES[campaignType];
+    for (const field of currentTypeConfig.fields) {
+      if (field.required && !typeSpecificFields[field.name]) {
+        setMessage(`Please fill ${field.label}`);
+        return;
+      }
+    }
 
-    setCampaigns([...campaigns, newCampaign]);
-    setMessage('Campaign created successfully!');
-    setCampaignTitle('');
-    setCampaignDescription('');
-    setFundingGoal('');
-    setEndDate('');
-    setShowCreateCampaign(false);
+    setIsLoading(true);
+    try {
+      const campaignData = {
+        title: campaignTitle,
+        description: campaignDescription,
+        endDate,
+        type: campaignType,
+        typeData: typeSpecificFields,
+        status: "active"
+      };
+
+      const response = await fetch(`${API_BASE}/api/campaigns`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(campaignData)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to create campaign');
+      }
+
+      const newCampaign = await response.json();
+      setCampaigns(prev => [newCampaign, ...prev]);
+      setMessage('Campaign created successfully!');
+
+      // Reset form
+      setCampaignTitle('');
+      setCampaignDescription('');
+      setEndDate('');
+      setTypeSpecificFields({});
+      setShowCreateCampaign(false);
+    } catch (error) {
+      console.error('Error creating campaign:', error);
+      setMessage(error.message || 'Error creating campaign');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const toggleNotifications = () => {
     setShowNotifications(!showNotifications);
-    // Mark all as read when opening
     if (!showNotifications) {
       setNotifications(notifications.map(n => ({ ...n, read: true })));
     }
   };
 
-  // Mock user data
-  const user = {
-    name: 'NGO Admin',
-    email: 'admin@example.org',
-    avatar: null
+  const calculateProgress = (raised, goal) => {
+    return Math.min(100, (raised / goal) * 100);
   };
 
   return (
@@ -191,32 +273,37 @@ function Campaigns() {
             <div className={styles.cardBadge}>{campaigns.length}</div>
           </div>
           <div className={styles.cardBody}>
-            {campaigns.length > 0 ? (
+            {isLoading ? (
+              <div className={styles.loadingState}>
+                <div className={styles.spinner}></div>
+                <p>Loading campaigns...</p>
+              </div>
+            ) : campaigns.length > 0 ? (
               <div className={styles.campaignsList}>
                 {campaigns.map(campaign => (
-                  <div key={campaign.id} className={styles.campaignItem}>
+                  <div key={campaign._id || campaign.id} className={styles.campaignItem}>
                     <div className={styles.campaignInfo}>
                       <h3>{campaign.title}</h3>
                       <p>{campaign.description}</p>
                       <div className={styles.progressContainer}>
                         <div className={styles.progressLabels}>
-                          <span>Raised: Rs. {campaign.raised.toLocaleString()}</span>
+                          <span>Raised: Rs. {(campaign.raised || 0).toLocaleString()}</span>
                           <span>Goal: Rs. {campaign.goal.toLocaleString()}</span>
                         </div>
                         <div className={styles.progressBar}>
                           <div
                             className={styles.progressFill}
-                            style={{ width: `${Math.min(100, (campaign.raised / campaign.goal) * 100)}%` }}
+                            style={{ width: `${calculateProgress(campaign.raised || 0, campaign.goal)}%` }}
                           ></div>
                         </div>
                         <div className={styles.progressPercentage}>
-                          {Math.round((campaign.raised / campaign.goal) * 100)}% funded
+                          {Math.round(calculateProgress(campaign.raised || 0, campaign.goal))}% funded
                         </div>
                       </div>
                       <div className={styles.campaignMeta}>
                         <span>Ends: {new Date(campaign.endDate).toLocaleDateString()}</span>
-                        <span className={`${styles.statusBadge} ${campaign.status}`}>
-                          {campaign.status}
+                        <span className={`${styles.statusBadge} ${campaign.status || 'active'}`}>
+                          {campaign.status || 'Active'}
                         </span>
                       </div>
                     </div>
@@ -242,58 +329,120 @@ function Campaigns() {
         {/* Create Campaign Modal */}
         {showCreateCampaign && (
           <div className={styles.modalOverlay}>
-            <div className={styles.modal}>
+            <div className={styles.modal} style={{ maxWidth: '500px' }}>
               <div className={styles.modalHeader}>
-                <h3>Create New Campaign</h3>
+                <h3>New Campaign</h3>
                 <button
                   className={styles.modalClose}
-                  onClick={() => setShowCreateCampaign(false)}
+                  onClick={() => {
+                    setShowCreateCampaign(false);
+                    setTypeSpecificFields({});
+                  }}
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className={styles.closeIcon} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
+                  &times;
                 </button>
               </div>
               <div className={styles.modalBody}>
                 <div className={styles.formGroup}>
-                  <label>Campaign Title</label>
+                  <label>Title*</label>
                   <input
                     type="text"
-                    placeholder="Enter campaign title"
+                    placeholder="Campaign title"
                     value={campaignTitle}
                     onChange={(e) => setCampaignTitle(e.target.value)}
+                    required
                   />
                 </div>
+
                 <div className={styles.formGroup}>
-                  <label>Description</label>
+                  <label>Description*</label>
                   <textarea
-                    placeholder="Enter campaign description"
+                    placeholder="Brief description"
                     value={campaignDescription}
                     onChange={(e) => setCampaignDescription(e.target.value)}
-                  ></textarea>
+                    rows={3}
+                    required
+                  />
                 </div>
+
                 <div className={styles.formRow}>
-                  <div className={styles.formGroup}>
-                    <label>Funding Goal (Rs.)</label>
-                    <input
-                      type="number"
-                      placeholder="Enter amount"
-                      value={fundingGoal}
-                      onChange={(e) => setFundingGoal(e.target.value)}
-                    />
+                  <div className={styles.formGroup} style={{ flex: 2 }}>
+                    <label>Type*</label>
+                    <select
+                      value={campaignType}
+                      onChange={(e) => setCampaignType(e.target.value)}
+                      className={styles.typeDropdown}
+                    >
+                      <option value="BLOOD">🩸 Blood Donation</option>
+                      <option value="SUPPLIES">🏥 Medical Supplies</option>
+                    </select>
                   </div>
-                  <div className={styles.formGroup}>
-                    <label>End Date</label>
+
+                  <div className={styles.formGroup} style={{ flex: 1 }}>
+                    <label>Date*</label>
                     <input
                       type="date"
                       value={endDate}
                       onChange={(e) => setEndDate(e.target.value)}
+                      required
                     />
                   </div>
                 </div>
-                {message && <p className={message.includes('success') ? styles.successMessage : styles.errorMessage}>{message}</p>}
-                <button className={styles.primaryButton} onClick={handleAddCampaign}>
-                  Launch Campaign
+
+                {/* Dynamic Fields */}
+                <div className={styles.typeSpecificFields}>
+                  {CAMPAIGN_TYPES[campaignType].fields.map((field) => (
+                    <div key={field.name} className={styles.formGroup}>
+                      <label>
+                        {field.label}
+                        {field.required && '*'}
+                      </label>
+                      {field.type === 'select' ? (
+                        <select
+                          value={typeSpecificFields[field.name] || ''}
+                          onChange={(e) => handleTypeSpecificChange(field.name, e.target.value)}
+                          required={field.required}
+                        >
+                          <option value="">Select {field.label}</option>
+                          {field.options.map(option => (
+                            <option key={option} value={option}>{option}</option>
+                          ))}
+                        </select>
+                      ) : field.type === 'textarea' ? (
+                        <textarea
+                          placeholder={`Enter ${field.label}`}
+                          value={typeSpecificFields[field.name] || ''}
+                          onChange={(e) => handleTypeSpecificChange(field.name, e.target.value)}
+                          required={field.required}
+                          rows={2}
+                        />
+                      ) : (
+                        <input
+                          type={field.type}
+                          placeholder={`Enter ${field.label}`}
+                          value={typeSpecificFields[field.name] || ''}
+                          onChange={(e) => handleTypeSpecificChange(field.name, e.target.value)}
+                          required={field.required}
+                          min={field.type === 'number' ? 1 : undefined}
+                        />
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                {message && (
+                  <p className={message.includes('success') ? styles.successMessage : styles.errorMessage}>
+                    {message}
+                  </p>
+                )}
+
+                <button
+                  className={styles.primaryButton}
+                  onClick={handleAddCampaign}
+                  disabled={isLoading}
+                  style={{ width: '100%', marginTop: '20px' }}
+                >
+                  {isLoading ? 'Creating...' : 'Create Campaign'}
                 </button>
               </div>
             </div>

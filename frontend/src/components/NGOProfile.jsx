@@ -1,6 +1,7 @@
 // NGOProfile.jsx
 import React, { useState } from 'react';
 import styles from '../styles/NGOProfile.module.css';
+import { FiEdit, FiUpload, FiCheck, FiX, FiUser } from 'react-icons/fi';
 
 const NGOProfile = ({ user }) => {
   const [showProfilePopup, setShowProfilePopup] = useState(false);
@@ -8,7 +9,10 @@ const NGOProfile = ({ user }) => {
   const [profileData, setProfileData] = useState({
     name: user.name,
     email: user.email,
-    avatar: user.avatar
+    avatar: user.avatar,
+    bio: user.bio || "Tell us about your organization...",
+    website: user.website || "",
+    phone: user.phone || ""
   });
 
   const handleInputChange = (e) => {
@@ -33,7 +37,7 @@ const NGOProfile = ({ user }) => {
     }
   };
 
-  const userAvatar = profileData.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.name)}&background=2563EB&color=fff`;
+  const userAvatar = profileData.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.name)}&background=2563EB&color=fff&bold=true`;
 
   return (
     <>
@@ -42,11 +46,20 @@ const NGOProfile = ({ user }) => {
         onClick={() => setShowProfilePopup(true)}
       >
         <div className={styles.avatar}>
-          <img src={userAvatar} alt={profileData.name} />
+          {profileData.avatar ? (
+            <img src={userAvatar} alt={profileData.name} />
+          ) : (
+            <div className={styles.avatarPlaceholder}>
+              <FiUser size={20} />
+            </div>
+          )}
         </div>
         <div className={styles.userInfo}>
           <span className={styles.userName}>{profileData.name}</span>
           <span className={styles.userEmail}>{profileData.email}</span>
+        </div>
+        <div className={styles.editIndicator}>
+          <FiEdit size={14} />
         </div>
       </div>
 
@@ -54,7 +67,7 @@ const NGOProfile = ({ user }) => {
         <div className={styles.profilePopup}>
           <div className={styles.popupContent}>
             <div className={styles.popupHeader}>
-              <h3>Edit Profile</h3>
+              <h3>Organization Profile</h3>
               <button 
                 className={styles.closeBtn}
                 onClick={() => {
@@ -62,21 +75,28 @@ const NGOProfile = ({ user }) => {
                   setEditMode(false);
                 }}
               >
-                &times;
+                <FiX size={20} />
               </button>
             </div>
 
             <div className={styles.profileForm}>
               <div className={styles.avatarUpload}>
                 <label htmlFor="avatar-upload">
-                  <img 
-                    src={userAvatar} 
-                    alt="Profile" 
-                    className={styles.profileAvatar}
-                  />
+                  {profileData.avatar ? (
+                    <img 
+                      src={userAvatar} 
+                      alt="Profile" 
+                      className={styles.profileAvatar}
+                    />
+                  ) : (
+                    <div className={styles.profileAvatarPlaceholder}>
+                      <FiUser size={32} />
+                    </div>
+                  )}
                   {editMode && (
                     <div className={styles.uploadOverlay}>
-                      <span>Change</span>
+                      <FiUpload size={18} />
+                      <span>Change Logo</span>
                     </div>
                   )}
                 </label>
@@ -92,7 +112,7 @@ const NGOProfile = ({ user }) => {
               </div>
 
               <div className={styles.formGroup}>
-                <label>Name</label>
+                <label>Organization Name</label>
                 {editMode ? (
                   <input
                     type="text"
@@ -100,6 +120,7 @@ const NGOProfile = ({ user }) => {
                     value={profileData.name}
                     onChange={handleInputChange}
                     className={styles.formInput}
+                    placeholder="Enter organization name"
                   />
                 ) : (
                   <div className={styles.formValue}>{profileData.name}</div>
@@ -115,9 +136,64 @@ const NGOProfile = ({ user }) => {
                     value={profileData.email}
                     onChange={handleInputChange}
                     className={styles.formInput}
+                    placeholder="Enter email address"
                   />
                 ) : (
                   <div className={styles.formValue}>{profileData.email}</div>
+                )}
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>Phone</label>
+                {editMode ? (
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={profileData.phone}
+                    onChange={handleInputChange}
+                    className={styles.formInput}
+                    placeholder="Enter contact number"
+                  />
+                ) : (
+                  <div className={styles.formValue}>{profileData.phone || "Not provided"}</div>
+                )}
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>Website</label>
+                {editMode ? (
+                  <input
+                    type="url"
+                    name="website"
+                    value={profileData.website}
+                    onChange={handleInputChange}
+                    className={styles.formInput}
+                    placeholder="Enter website URL"
+                  />
+                ) : (
+                  <div className={styles.formValue}>
+                    {profileData.website ? (
+                      <a href={profileData.website} target="_blank" rel="noopener noreferrer">
+                        {profileData.website}
+                      </a>
+                    ) : "Not provided"}
+                  </div>
+                )}
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>About Us</label>
+                {editMode ? (
+                  <textarea
+                    name="bio"
+                    value={profileData.bio}
+                    onChange={handleInputChange}
+                    className={styles.formTextarea}
+                    rows="4"
+                    placeholder="Tell us about your organization"
+                  />
+                ) : (
+                  <div className={styles.formValue}>{profileData.bio}</div>
                 )}
               </div>
 
@@ -128,13 +204,13 @@ const NGOProfile = ({ user }) => {
                       className={styles.saveBtn}
                       onClick={handleSave}
                     >
-                      Save Changes
+                      <FiCheck size={16} /> Save Changes
                     </button>
                     <button 
                       className={styles.cancelBtn}
                       onClick={() => setEditMode(false)}
                     >
-                      Cancel
+                      <FiX size={16} /> Cancel
                     </button>
                   </>
                 ) : (
@@ -142,7 +218,7 @@ const NGOProfile = ({ user }) => {
                     className={styles.editBtn}
                     onClick={() => setEditMode(true)}
                   >
-                    Edit Profile
+                    <FiEdit size={16} /> Edit Profile
                   </button>
                 )}
               </div>

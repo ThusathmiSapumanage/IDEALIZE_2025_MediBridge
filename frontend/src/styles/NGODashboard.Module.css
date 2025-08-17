@@ -219,18 +219,12 @@
   color: currentColor;
 }
 
-.badge {
-  background-color: var(--primary);
-  color: white;
-  border-radius: 9999px;
-  padding: 0.25rem 0.5rem;
-  font-size: 0.75rem;
-  margin-left: auto;
-}
-
 .sidebarFooter {
   padding: 1.5rem;
   border-top: 1px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 /* Main Content Styles */
@@ -521,27 +515,12 @@
 }
 
 .statusBadge {
-  display: inline-block;
-  padding: 0.25rem 0.5rem;
+  background-color: #10b981;
+  color: white;
+  padding: 0.25rem 0.75rem;
   border-radius: 9999px;
   font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: capitalize;
-}
-
-.statusBadge.completed {
-  background-color: #D1FAE5;
-  color: #10B981;
-}
-
-.statusBadge.pending {
-  background-color: #FEF3C7;
-  color: var(--golden-yellow);
-}
-
-.statusBadge.failed {
-  background-color: #FEE2E2;
-  color: #EF4444;
+  font-weight: 500;
 }
 
 /* Task List Styles */
